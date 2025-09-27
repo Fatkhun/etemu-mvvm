@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.Etemu" parent="Theme.MaterialComponents.Light">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/p_50</item>
+        <item name="colorPrimaryVariant">@color/p_50</item>
+        <item name="colorOnPrimary">@color/b_0</item>
+        <item name="colorPrimaryDark">@color/p_50</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/p_50</item>
+        <item name="colorSecondaryVariant">@color/p_25</item>
+        <item name="colorOnSecondary">@color/b_100</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
+    <style name="ProgressBarStyle">
+        <item name="colorAccent">@color/p_50</item>
+    </style>
+
+    <!--  title  -->
+    <style name="title_base" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/rubik_bold</item>
+    </style>
+
+    <style name="title_display" parent="title_base">
+        <item name="android:textSize">@dimen/_24ssp</item>
+        <item name="lineHeight">@dimen/_32sdp</item>
+    </style>
+
+    <style name="title_extra_large" parent="title_base">
+        <item name="android:textSize">@dimen/_19ssp</item>
+        <item name="lineHeight">@dimen/_26sdp</item>
+    </style>
+
+    <style name="title_large" parent="title_base">
+        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="lineHeight">@dimen/_21sdp</item>
+    </style>
+
+    <style name="title_medium" parent="title_base">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="lineHeight">@dimen/_17sdp</item>
+    </style>
+
+    <style name="title_small" parent="title_base">
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="lineHeight">@dimen/_13sdp</item>
+    </style>
+    <!--    -->
+
+    <!--  sub-title  -->
+    <style name="subtitle_base" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/rubik_semi_bold</item>
+    </style>
+
+    <style name="subtitle_extra_large" parent="subtitle_base">
+        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="lineHeight">@dimen/_21sdp</item>
+    </style>
+
+    <style name="subtitle_large" parent="subtitle_base">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="lineHeight">@dimen/_17sdp</item>
+    </style>
+
+    <style name="subtitle_middle" parent="subtitle_base">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="lineHeight">@dimen/_15sdp</item>
+    </style>
+
+    <style name="subtitle_medium" parent="subtitle_base">
+        <item name="android:textSize">@dimen/_11ssp</item>
+        <item name="lineHeight">@dimen/_15sdp</item>
+    </style>
+
+    <style name="subtitle_small" parent="subtitle_base">
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="lineHeight">@dimen/_13sdp</item>
+    </style>
+
+    <style name="subtitle_mini" parent="subtitle_base">
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="lineHeight">@dimen/_11sdp</item>
+    </style>
+    <!--    -->
+
+    <!--  body  -->
+    <style name="body_base" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/rubik_regular</item>
+    </style>
+
+    <style name="body_large" parent="body_base">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="lineHeight">@dimen/_17sdp</item>
+    </style>
+
+    <style name="body_middle" parent="body_base">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="lineHeight">@dimen/_15sdp</item>
+    </style>
+
+    <style name="body_medium" parent="body_base">
+        <item name="android:textSize">@dimen/_11ssp</item>
+        <item name="lineHeight">@dimen/_15sdp</item>
+    </style>
+
+    <style name="body_small" parent="body_base">
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="lineHeight">@dimen/_13sdp</item>
+    </style>
+
+    <style name="body_mini" parent="body_base">
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="lineHeight">@dimen/_11sdp</item>
+    </style>
+    <!--    -->
+
+    <style name="body_medium_base" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/rubik_medium</item>
+    </style>
+
+    <style name="body_medium_large" parent="body_medium_base">
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="lineHeight">@dimen/_17sdp</item>
+    </style>
+
+    <style name="body_medium_medium" parent="body_medium_base">
+        <item name="android:textSize">@dimen/_11ssp</item>
+        <item name="lineHeight">@dimen/_15sdp</item>
+    </style>
+
+    <style name="body_medium_middle" parent="body_medium_base">
+        <item name="android:textSize">@dimen/_11ssp</item>
+        <item name="lineHeight">@dimen/_13sdp</item>
+    </style>
+
+    <style name="body_medium_small" parent="body_medium_base">
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="lineHeight">@dimen/_13sdp</item>
+    </style>
+
+    <style name="body_medium_mini" parent="body_medium_base">
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="lineHeight">@dimen/_11sdp</item>
+    </style>
+</resources>

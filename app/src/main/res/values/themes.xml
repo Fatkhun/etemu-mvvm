@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Etemu" parent="Theme.MaterialComponents.Light">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/p_50</item>
+        <item name="colorPrimaryVariant">@color/p_50</item>
+        <item name="colorOnPrimary">@color/b_0</item>
+        <item name="colorPrimaryDark">@color/p_50</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/p_50</item>
+        <item name="colorSecondaryVariant">@color/p_25</item>
+        <item name="colorOnSecondary">@color/b_100</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
+    <style name="Theme.Etemu" parent="Base.Theme.Etemu" />
+</resources>

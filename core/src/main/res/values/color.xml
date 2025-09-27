@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  primary  -->
+    <color name="p_100">#870B0B</color>
+    <color name="p_75">#A90D0D</color>
+    <color name="p_50">#cb1010</color>
+    <color name="p_25">#d43838</color>
+    <color name="p_0">#dc6060</color>
+    <color name="p_05">#F9D2DE</color>
+    <color name="p_010">#1AEB6F97</color>
+    <color name="p_bg_chip_jastip">#FFE9EF</color>
+
+    <!--  secondary  -->
+    <color name="s_100">#277B39</color>
+    <color name="s_75">#2F9545</color>
+    <color name="s_50">#3BBC57</color>
+    <color name="s_25">#5CC773</color>
+    <color name="s_0">#7CD28F</color>
+    <color name="s_0175">#1A7CD28F</color>
+
+    <!--  b/w  -->
+    <color name="b_100">#2D1C1C</color>
+    <color name="b_75">#615555</color>
+    <color name="b_50">#968D8D</color>
+    <color name="b_25">#CAC6C6</color>
+    <color name="b_0">#FFFFFF</color>
+    <color name="b_02">#33FFFFFF</color>
+    <color name="b_03">#4DFFFFFF</color>
+    <color name="b_04">#66FFFFFF</color>
+    <color name="b_05">#80FFFFFF</color>
+    <color name="b_0525">#80CAC6C6</color>
+
+    <!--  d  -->
+    <color name="d_50">#F4F4F4</color>
+    <color name="d_0">#FAF9F9</color>
+    <color name="d_100">#EFEEEE</color>
+</resources>
