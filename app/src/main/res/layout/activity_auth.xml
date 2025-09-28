@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AuthActivity">
+
+    <LinearLayout
+        android:id="@+id/line_btn_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="@dimen/_16sdp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mb_next"
+            style="@style/Big.MaterialButton.Primary"
+            android:layout_width="match_parent"
+            android:enabled="false"
+            android:text="Lanjutkan" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/ns_register"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/line_btn_next">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_150sdp"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="@dimen/_52sdp"
+                android:src="@drawable/ic_ilus_general_warning"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/_16sdp"
+                android:paddingVertical="@dimen/_12sdp">
+
+                <TextView
+                    android:id="@+id/tv_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Login dahulu untuk menikmati fiturnya"
+                    android:textAppearance="@style/subtitle_large"
+                    android:textColor="@color/b_100" />
+
+                <TextView
+                    android:id="@+id/tv_login_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:text="@string/app_text_register_email"
+                    android:textAppearance="@style/subtitle_small"
+                    android:textColor="@color/b_100" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_email"
+                        style="@style/CustomOutlineBoxV1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/box_input_stroke_color"
+                        app:endIconMode="clear_text"
+                        app:hintEnabled="false">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Masukkan email anda"
+                            android:inputType="textEmailAddress"
+                            android:paddingStart="@dimen/_9sdp"
+                            android:paddingTop="@dimen/_14sdp"
+                            android:paddingEnd="0dp"
+                            android:paddingBottom="@dimen/_14sdp"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100"
+                            android:textColorHint="@color/b_25" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tv_error_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:text="email anda tidak valid"
+                    android:textAppearance="@style/body_mini"
+                    android:textColor="@color/p_50"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/tv_login_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:text="@string/app_text_register_pass"
+                    android:textAppearance="@style/subtitle_small"
+                    android:textColor="@color/b_100" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_password"
+                        style="@style/CustomOutlineBoxV1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeColor="@color/box_input_stroke_color"
+                        app:endIconMode="password_toggle"
+                        app:hintEnabled="false">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Masukkan password anda"
+                            android:inputType="textPassword"
+                            android:maxLength="8"
+                            android:paddingStart="@dimen/_9sdp"
+                            android:paddingEnd="0dp"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100"
+                            android:textColorHint="@color/b_25" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tv_error_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:text="Isi password dulu, yaa."
+                    android:textAppearance="@style/body_mini"
+                    android:textColor="@color/p_50"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:text="Belum punya akun? Daftar disini"
+                    android:textColor="@color/b_100"
+                    android:textAppearance="@style/subtitle_small"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

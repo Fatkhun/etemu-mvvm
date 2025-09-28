@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.koin)
     implementation(libs.koin.scope)
     implementation(libs.koin.viewmodel)
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

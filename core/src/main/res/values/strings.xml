@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_text_register_name"><![CDATA[Nama Lengkap<font color="#CB1010">*</font>]]></string>
+    <string name="app_text_register_pass"><![CDATA[Password<font color="#CB1010">*</font>]]></string>
+    <string name="app_text_register_email"><![CDATA[Email<font color="#CB1010">*</font>]]></string>
+</resources>
