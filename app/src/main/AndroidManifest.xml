@@ -15,7 +15,8 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Etemu">
+        android:theme="@style/Theme.Etemu"
+        tools:replace="android:icon,android:allowBackup,android:roundIcon,android:name,android:theme">
         <activity
             android:name=".SplashAppActivity"
             android:configChanges="orientation|keyboardHidden"

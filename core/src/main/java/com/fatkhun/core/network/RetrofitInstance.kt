@@ -26,7 +26,7 @@ class RetrofitInstance(
 
     private fun fetchUrl(urlKey: Preferences.Key<String>, blankCount: Int = 0): String {
         var base = ""
-        dataStoreViewModel.getSecureDataValue(urlKey, "") { base = it }.toString()
+        dataStoreViewModel.getSecureDataValue(urlKey, "http://localhost:8080/") { base = it }.toString()
         logError("baseUrl: $base")
 
         return if (base.isBlank() && blankCount < 3) fetchUrl(urlKey, blankCount + 1) else base
@@ -36,7 +36,7 @@ class RetrofitInstance(
         val gson = GsonBuilder().setLenient().create()
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl(url)
+            .baseUrl("http://192.168.100.57:8080/")
             .client(okHttpClients.provideClient())
             .build()
             .create(RetrofitRoutes::class.java)

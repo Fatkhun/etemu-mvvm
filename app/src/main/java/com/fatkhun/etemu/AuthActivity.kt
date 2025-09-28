@@ -22,6 +22,7 @@ import com.fatkhun.core.utils.gone
 import com.fatkhun.core.utils.handleApiCallback
 import com.fatkhun.core.utils.isEmailValid
 import com.fatkhun.core.utils.setCustomeTextHTML
+import com.fatkhun.core.utils.toJson
 import com.fatkhun.core.utils.visible
 import com.fatkhun.etemu.databinding.ActivityAuthBinding
 import com.google.android.material.textfield.TextInputLayout
@@ -39,6 +40,8 @@ class AuthActivity : BaseActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        binding.tvLoginPass.text =
+            setCustomeTextHTML(resources.getString(com.fatkhun.core.R.string.app_text_register_pass))
         binding.tvLoginEmail.text =
             setCustomeTextHTML(resources.getString(com.fatkhun.core.R.string.app_text_register_email))
         binding.edtEmail.afterTextChangedDebounce(1000, {
@@ -103,8 +106,8 @@ class AuthActivity : BaseActivity() {
         binding.mbNext.enable()
         binding.mbNext.setOnClickListener{
             val form = LoginForm(
-                email = binding.tvLoginEmail.text.toString(),
-                password = binding.tvLoginPass.text.toString()
+                email = binding.edtEmail.text.toString(),
+                password = binding.edtPassword.text.toString()
             )
             mainVM.loginUser(form).observe(this) { responseBody ->
                 handleApiCallback(this, responseBody, true, object : RemoteCallback<String> {
@@ -113,9 +116,11 @@ class AuthActivity : BaseActivity() {
                 }) { res, code ->
                     if (code == RC().SUCCESS) {
                         res?.let {
+                            preferenceVM.setSecureDataValue(PrefKey.DATA_USER, it.data.user.toJson())
                             preferenceVM.setSecureDataValue(PrefKey.IS_LOGIN, "1")
                             preferenceVM.setSecureDataValue(PrefKey.AUTH_TOKEN, it.data.token)
                             startActivity(Intent(this, MainActivity::class.java))
+                            finish()
                         }
                     } else {
                         res?.let {

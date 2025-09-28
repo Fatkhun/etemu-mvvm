@@ -11,6 +11,7 @@ import com.fatkhun.core.helper.StoreDataHelper
 import com.fatkhun.core.ui.BaseActivity
 import com.fatkhun.core.ui.DataStoreViewModel
 import com.fatkhun.core.utils.PrefKey
+import com.fatkhun.core.utils.logError
 import com.fatkhun.etemu.databinding.ActivitySplashAppBinding
 
 class SplashAppActivity : BaseActivity() {
@@ -28,6 +29,7 @@ class SplashAppActivity : BaseActivity() {
             insets
         }
         val idUser = storeDataHelper.getDataUser().id
+        logError("id_user $idUser")
         if (idUser.isNotEmpty() && idUser != "0") {
             if (storeDataHelper.isLoginUser() == "1") {
                 preferenceVM.setSecureDataValue(PrefKey.IS_LOGIN, "1")

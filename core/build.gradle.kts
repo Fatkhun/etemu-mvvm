@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.sdp)
     implementation(libs.ssp)
     implementation(libs.glide)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     ksp(libs.glide.kapt)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

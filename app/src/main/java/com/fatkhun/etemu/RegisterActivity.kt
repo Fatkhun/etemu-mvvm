@@ -125,9 +125,9 @@ class RegisterActivity : BaseActivity() {
         binding.mbNext.enable()
         binding.mbNext.setOnClickListener{
             val form = RegisterForm(
-                name = binding.tvRegisterName.text.toString(),
-                email = binding.tvRegisterEmail.text.toString(),
-                password = binding.tvRegisterPass.text.toString()
+                name = binding.edtName.text.toString(),
+                email = binding.edtEmail.text.toString(),
+                password = binding.edtPassword.text.toString()
             )
             mainVM.registerUser(form).observe(this) { responseBody ->
                 handleApiCallback(this, responseBody, true, object : RemoteCallback<String> {
@@ -136,6 +136,7 @@ class RegisterActivity : BaseActivity() {
                 }) { res, code ->
                     if (code == RC().CREATED) {
                         startActivity(Intent(this, AuthActivity::class.java))
+                        finish()
                     } else {
                         res?.let {
                             dialogAlertOneButton(

@@ -218,7 +218,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Masukkan password anda"
                             android:inputType="textPassword"
-                            android:maxLength="8"
+                            android:maxLength="12"
                             android:paddingStart="@dimen/_9sdp"
                             android:paddingEnd="0dp"
                             android:textAppearance="@style/body_medium"
