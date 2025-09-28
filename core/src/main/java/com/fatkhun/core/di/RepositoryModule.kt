@@ -17,7 +17,4 @@ val repoModule = module {
     single {
         MainRepository(get(), get(), get())
     }
-    viewModel {
-        MainViewModel(get(), get())
-    }
 }
