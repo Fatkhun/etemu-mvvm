@@ -33,3 +33,16 @@ enum class Status {
     ERROR,
     LOADING
 }
+
+data class RC(
+    val SUCCESS: Int = 200,
+    val CREATED: Int = 201,
+    val ACCEPTED: Int = 202,
+    val UNAUTHORIZED: Int = 401,
+    val FORBIDDEN: Int = 403,
+    val NOT_FOUND: Int = 404,
+    val NOT_ALLOWED: Int = 405,
+    val ERROR: Int = 500,
+    val SERVICE_UNAVAILABLE: Int = 503,
+    val BAD_REQUEST: Int = 400,
+)

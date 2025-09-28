@@ -10,12 +10,17 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v4.widget.CircularProgressDrawable
+import android.text.Editable
 import android.text.Spanned
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
@@ -28,8 +33,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.fatkhun.core.R
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 /**
@@ -378,4 +395,87 @@ fun Context.changeLocale(language: String): Context {
     val config = this.resources.configuration
     config.setLocale(locale)
     return createConfigurationContext(config)
+}
+
+fun EditText.afterTextChangedDebounce(
+    delayMillis: Long,
+    beforeAction: () -> Unit = {},
+    input: (String) -> Unit
+) {
+    val textFlow = MutableStateFlow("")
+    val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    // Collect changes with debounce
+    scope.launch {
+        textFlow
+            .debounce(delayMillis)
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .collect { input(it) }
+    }
+
+    this.addTextChangedListener(object : TextWatcher {
+        override fun afterTextChanged(editable: Editable?) {
+            editable?.toString()?.let { newText ->
+                if (newText.isNotBlank()) {
+                    scope.launch { textFlow.emit(newText) }
+                }
+            }
+        }
+
+        override fun beforeTextChanged(cs: CharSequence?, start: Int, count: Int, after: Int) {
+            beforeAction()
+        }
+
+        override fun onTextChanged(cs: CharSequence?, start: Int, before: Int, count: Int) {}
+    })
+
+    // Clean up when view is detached
+    this.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+        override fun onViewAttachedToWindow(v: View) {}
+        override fun onViewDetachedFromWindow(v: View) {
+            scope.cancel()
+            this@afterTextChangedDebounce.removeOnAttachStateChangeListener(this)
+        }
+    })
+}
+
+fun isEmailValid(input: String): Boolean {
+    return !TextUtils.isEmpty(input) && android.util.Patterns.EMAIL_ADDRESS.matcher(input).matches()
+}
+
+fun dialogAlertOneButton(
+    context: Context,
+    resId: Int,
+    title: String,
+    subtitle: String,
+    textButton: String,
+    cancelable: Boolean = true,
+    callback: (BottomSheetDialog) -> Unit
+) {
+    val activity = context as? Activity ?: return
+    if (activity.isFinishing || activity.isDestroyed) return
+
+    BottomSheetDialog(context, R.style.BottomSheetDialogNoBorder).apply {
+        setCancelable(cancelable)
+        setContentView(layoutInflater.inflate(R.layout.dialog_popup_alert_one_button, null))
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        val iv_alert = findViewById<ImageView>(R.id.iv_alert)
+        val tv_title_alert = findViewById<TextView>(R.id.tv_title_alert)
+        val tv_subtitle_alert = findViewById<TextView>(R.id.tv_subtitle_alert)
+        val mb_confirm_alert = findViewById<MaterialButton>(R.id.mb_confirm_alert)
+
+        iv_alert?.setImageResource(resId)
+        tv_title_alert?.text = setCustomeTextHTML(title)
+        tv_subtitle_alert?.text = setCustomeTextHTML(subtitle)
+        mb_confirm_alert?.text = textButton
+        mb_confirm_alert?.setOnClickListener {
+            callback.invoke(this@apply)
+        }
+        setOnCancelListener {
+            it.dismiss()
+        }
+        show()
+    }
 }

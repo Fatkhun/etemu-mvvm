@@ -21,8 +21,391 @@
         <item name="android:windowDisablePreview">true</item>
     </style>
 
+    <style name="BottomDialogModalStyleNoBorder" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_rounded_dialog_12dp</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="BottomSheetDialogNoBorder" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomDialogModalStyleNoBorder</item>
+    </style>
+
     <style name="ProgressBarStyle">
         <item name="colorAccent">@color/p_50</item>
+    </style>
+
+    <style name="Big.MaterialButton.Custom" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/b_0</item>
+        <item name="backgroundTint">@color/b_0</item>
+        <item name="backgroundTintMode">add</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/b_25</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Big.MaterialButton.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textColor">@color/text_button_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_state_list</item>
+        <item name="backgroundTint">@color/bg_button_state_list</item>
+        <item name="backgroundTintMode">add</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Big.MaterialButton.Primary.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textColor">@color/text_button_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="strokeColor">@color/bg_button_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_transparent_state_list</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Big.MaterialButton.Primary.TextOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textColor">@color/text_button_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_transparent_state_list</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Big.MaterialButton.Secondary" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_secondary_state_list</item>
+        <item name="backgroundTint">@color/bg_button_secondary_state_list</item>
+        <item name="backgroundTintMode">add</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Big.MaterialButton.Secondary.V2" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_v2_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_secondary_v2_state_list</item>
+        <item name="backgroundTint">@color/bg_button_secondary_v2_state_list</item>
+        <item name="backgroundTintMode">add</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_v2_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Big.MaterialButton.Secondary.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_secondary_transparent_state_list</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Big.MaterialButton.Secondary.TextOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_height">@dimen/_40sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_secondary_transparent_state_list</item>
+        <item name="iconSize">@dimen/_15sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_state_list</item>
+        <item name="backgroundTint">@color/bg_button_state_list</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="strokeColor">@color/bg_button_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Primary.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="strokeColor">@color/bg_button_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Primary.TextOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Primary.TextOnlyMedium" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_medium</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Secondary" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_secondary_state_list</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Secondary.V2" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_v2_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_secondary_v2_state_list</item>
+        <item name="backgroundTint">@color/bg_button_secondary_v2_state_list</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_v2_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Secondary.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_secondary_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Medium.MaterialButton.Secondary.TextOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_secondary_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Small.MaterialButton.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_25sdp</item>
+        <item name="android:textColor">@color/text_button_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_state_list</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="strokeColor">@color/bg_button_border_state_list</item>
+        <item name="strokeWidth">@dimen/_1sdp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Small.MaterialButton.Primary.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">@dimen/_25sdp</item>
+        <item name="android:textColor">@color/text_button_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="strokeColor">@color/bg_button_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Small.MaterialButton.Primary.TextOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/p_75</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Small.MaterialButton.Secondary" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/_25sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="background">@color/bg_button_secondary_state_list</item>
+        <item name="backgroundTint">@color/bg_button_secondary_state_list</item>
+        <item name="backgroundTintMode">add</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Small.MaterialButton.Secondary.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">@dimen/_25sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/_8sdp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="strokeColor">@color/bg_button_secondary_border_state_list</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_secondary_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="Small.MaterialButton.Secondary.TextOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_height">@dimen/_31sdp</item>
+        <item name="android:textColor">@color/text_button_secondary_transparent_state_list</item>
+        <item name="android:textAppearance">@style/subtitle_small</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/s_100</item>
+        <item name="iconPadding">@dimen/_6sdp</item>
+        <item name="iconTint">@color/text_button_secondary_transparent_state_list</item>
+        <item name="iconSize">@dimen/_12sdp</item>
+        <item name="android:theme">@style/Base.Theme.Etemu</item>
+    </style>
+
+    <style name="CustomOutlineBoxV1" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeWidth">@dimen/_1sdp</item>
+        <item name="boxStrokeColor">@color/b_50</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_10sdp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_10sdp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_10sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_10sdp</item>
+        <item name="android:textColorHint">@color/b_50</item>
+        <item name="hintTextColor">@color/b_50</item>
+    </style>
+
+    <style name="CustomOutlineBoxV2" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeWidth">@dimen/_1sdp</item>
+        <item name="boxStrokeColor">@color/b_50</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_4sdp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_4sdp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_4sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_4sdp</item>
+        <item name="android:textColorHint">@color/b_50</item>
+        <item name="hintTextColor">@color/b_50</item>
+    </style>
+
+    <style name="CustomBoxV1" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusTopEnd">@dimen/_10sdp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_10sdp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_10sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_10sdp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxBackgroundColor">@color/d_100</item>
+        <item name="android:textColorHint">@color/b_50</item>
+        <item name="hintTextColor">@color/b_50</item>
     </style>
 
     <!--  title  -->
