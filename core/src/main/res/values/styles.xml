@@ -408,6 +408,32 @@
         <item name="hintTextColor">@color/b_50</item>
     </style>
 
+    <style name="Widget.MaterialComponents.Chip.Choice" parent="Base.Widget.MaterialComponents.Chip">
+        <item name="android:checkable">true</item>
+
+        <item name="chipIconVisible">false</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="closeIconVisible">false</item>
+
+        <item name="checkedIcon">@drawable/ic_mtrl_chip_checked_black</item>
+
+        <item name="android:textColor">@color/mtrl_choice_chip_text_color</item>
+
+        <item name="chipBackgroundColor">@color/mtrl_choice_chip_background_color</item>
+        <item name="rippleColor">@color/mtrl_choice_chip_ripple_color</item>
+
+    </style>
+
+    <style name="BottomDialogModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_modal_bottom</item>
+    </style>
+
+    <style name="BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomDialogModalStyle</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
     <!--  title  -->
     <style name="title_base" parent="TextAppearance.AppCompat.Medium">
         <item name="android:fontFamily">@font/rubik_bold</item>

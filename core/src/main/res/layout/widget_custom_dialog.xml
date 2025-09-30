@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/b_0"
+    app:cardCornerRadius="@dimen/_15sdp">
+
+    <LinearLayout
+        android:id="@+id/layoutDialog"
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:paddingBottom="@dimen/_20sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:gravity="center"
+            android:textAppearance="@style/subtitle_large"
+            android:textColor="@color/b_100"
+            tools:text="Hapus ya?" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDialogMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:gravity="center"
+            android:textAppearance="@style/body_medium"
+            android:textColor="@color/b_100"
+            tools:text="Hapus ya?" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDialogNegative"
+                style="@style/Medium.MaterialButton.Primary"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/_5sdp"
+                android:textAppearance="@style/subtitle_medium"
+                tools:text="Pertahankan" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDialogPositive"
+                style="@style/Medium.MaterialButton.Primary.Outline"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/_5sdp"
+                android:textAppearance="@style/subtitle_medium"
+                tools:text="Hapus" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

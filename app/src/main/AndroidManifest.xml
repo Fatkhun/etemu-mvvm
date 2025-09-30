@@ -2,6 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-sdk tools:overrideLibrary="       androidx.camera.camera2, androidx.camera.core,       androidx.camera.view, androidx.camera.lifecycle" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
     <application
         android:name=".AppApplication"
         android:allowBackup="false"
@@ -17,6 +28,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Etemu"
         tools:replace="android:icon,android:allowBackup,android:roundIcon,android:name,android:theme">
+        <activity
+            android:name=".DetailPostingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CameraXActivity"
+            android:exported="false" />
         <activity
             android:name=".PostingActivity"
             android:exported="false" />
@@ -50,6 +67,17 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
+
+        <provider
+            android:name="com.fatkhun.core.utils.PostingFileProvider"
+            android:authorities="${applicationId}.file-provider-posting"
+            android:enabled="true"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path_posting" />
+        </provider>
     </application>
 
 </manifest>

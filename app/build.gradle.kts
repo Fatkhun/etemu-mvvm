@@ -85,6 +85,7 @@ android {
 dependencies {
     implementation(project(":core"))
 
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
@@ -94,11 +95,16 @@ dependencies {
     implementation(libs.koin.scope)
     implementation(libs.koin.viewmodel)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.chrisbanes.photoview)
+    implementation(libs.androidx.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.swipe.refresh)
+    implementation(libs.shimmer)
+    implementation(libs.glide)
+    ksp(libs.glide.kapt)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation (libs.androidx.core.ktx) {
-        exclude("com.android.support", "support-compat")
-    }
 }

@@ -16,7 +16,7 @@ import com.fatkhun.etemu.databinding.ActivitySplashAppBinding
 
 class SplashAppActivity : BaseActivity() {
 
-    lateinit var binding: ActivitySplashAppBinding
+    private lateinit var binding: ActivitySplashAppBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

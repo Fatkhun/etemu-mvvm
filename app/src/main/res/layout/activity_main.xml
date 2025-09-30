@@ -15,7 +15,7 @@
         android:layout_height="@dimen/_150sdp"
         android:src="@drawable/ic_pixeltrue_seo"
         android:scaleType="fitCenter"
-        app:layout_constraintTop_toTopOf="true"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:adjustViewBounds="true"
@@ -55,9 +55,11 @@
                     android:paddingHorizontal="@dimen/_16sdp">
 
                     <EditText
+                        android:id="@+id/edtSearch"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:imeOptions="actionSearch"
                         android:hint="Apa yang sedang kamu cari?"
                         android:layout_marginVertical="@dimen/_8sdp"
                         android:textAppearance="@style/body_medium"
@@ -93,35 +95,239 @@
             app:fabSize="normal"/>
     </LinearLayout>
 
-    <!-- Konten Scroll -->
-    <androidx.core.widget.NestedScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/lineSearch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"
-        android:fillViewport="true">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="16dp">
+            android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_completed_items"
+            <!-- Konten Scroll -->
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/component_lost_found"
-                tools:itemCount="3"
-                android:paddingHorizontal="@dimen/_12sdp"
-                android:clipToPadding="false"/>
+                android:fillViewport="true">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvListItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/component_lost_found"
+                        tools:itemCount="3"
+                        android:paddingHorizontal="@dimen/_12sdp"
+                        android:clipToPadding="false"/>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/empty_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/icon_empty"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/ic_ilus_general_warning"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.35" />
+
+                        <LinearLayout
+                            android:id="@+id/lyt_info"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/icon_empty"
+                            app:layout_constraintWidth_percent="0.7">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Yah, tidak ditemukan barang apapun"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/subtitle_medium"
+                                android:textColor="@color/b_50" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_4sdp"
+                                android:gravity="center"
+                                android:text="Kami tidak bisa menemukan barang yang dicari"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/body_small"
+                                android:textColor="@color/b_50" />
+
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/empty_view_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/icon_empty_search"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/ic_wishlist_empty_filter"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.35" />
+
+                        <LinearLayout
+                            android:id="@+id/lyt_info_empty_search"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/icon_empty_search"
+                            app:layout_constraintWidth_percent="0.7">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Barang yang kamu cari gak ada"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/subtitle_medium"
+                                android:textColor="@color/b_100" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_4sdp"
+                                android:gravity="center"
+                                android:text="Coba cari pake kata lain yuk!"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/body_small"
+                                android:textColor="@color/b_75" />
+
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/empty_view_filter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/icon_empty_filter"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/ic_ilus_general_warning"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.35" />
+
+                        <LinearLayout
+                            android:id="@+id/lyt_info_filter"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_12sdp"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/icon_empty_filter"
+                            app:layout_constraintWidth_percent="0.75">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Tidak ditemukan resto berdasarkan filter kamu "
+                                android:textAlignment="center"
+                                android:textAppearance="@style/title_medium"
+                                android:textColor="@color/b_50" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_4sdp"
+                                android:text="Ubah filter untuk dapet hasil lebih banyak"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/body_small"
+                                android:textColor="@color/b_50" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_filter"
+                                style="@style/Big.MaterialButton.Primary"
+                                android:layout_width="match_parent"
+                                android:layout_marginTop="@dimen/_19sdp"
+                                android:text="Ubah Filter" />
+
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/lyt_shimmer"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:visibility="gone"
+                        tools:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                            <include layout="@layout/component_shimmer_list" />
+
+                        </LinearLayout>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_item"

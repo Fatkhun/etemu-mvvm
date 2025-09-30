@@ -3,4 +3,5 @@
     <string name="app_text_register_name"><![CDATA[Nama Lengkap<font color="#CB1010">*</font>]]></string>
     <string name="app_text_register_pass"><![CDATA[Password<font color="#CB1010">*</font>]]></string>
     <string name="app_text_register_email"><![CDATA[Email<font color="#CB1010">*</font>]]></string>
+    <string name="no_camera_exists">No Application exists for camera!</string>
 </resources>

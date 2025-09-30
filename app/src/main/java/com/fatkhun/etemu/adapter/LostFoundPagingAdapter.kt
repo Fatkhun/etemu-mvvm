@@ -1,0 +1,78 @@
+package com.fatkhun.etemu.adapter
+
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.fatkhun.core.model.LostFoundItemList
+import com.fatkhun.core.utils.FormatDateTime
+import com.fatkhun.core.utils.load
+import com.fatkhun.core.utils.setCustomeTextHTML
+import com.fatkhun.etemu.databinding.ComponentLostFoundBinding
+
+class LostFoundPagingAdapter(
+    private val context: Context,
+    private val callback: Callback
+): PagingDataAdapter<LostFoundItemList, LostFoundPagingAdapter.ViewHolder>(LostFoundDiffCallback()) {
+
+    class LostFoundDiffCallback : DiffUtil.ItemCallback<LostFoundItemList>() {
+        override fun areItemsTheSame(oldItem: LostFoundItemList, newItem: LostFoundItemList): Boolean {
+            return oldItem._id == newItem._id
+        }
+
+        override fun areContentsTheSame(
+            oldItem: LostFoundItemList,
+            newItem: LostFoundItemList
+        ): Boolean {
+            return oldItem == newItem
+        }
+
+    }
+
+    interface Callback {
+        fun onClickItem(pos: Int, item: LostFoundItemList)
+    }
+
+    inner class ViewHolder(val binding: ComponentLostFoundBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bindView(
+            datas: LostFoundItemList,
+            pos: Int,
+            callback: Callback
+        ) {
+            binding.itemImage.load(
+                context,
+                datas.photoUrl
+            )
+            binding.itemTitle.text = setCustomeTextHTML(datas.name)
+            binding.itemLocation.text = setCustomeTextHTML(datas.description)
+            binding.itemDate.text = FormatDateTime.getInfoTimeUtc(FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ, datas.createdAt)
+            binding.itemCategory.text = setCustomeTextHTML(datas.category.name)
+            binding.mbDetail.setOnClickListener {
+                callback.onClickItem(pos, datas)
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(
+            ComponentLostFoundBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        getItem(position)?.let {
+            holder.bindView(it, position, callback)
+        }
+    }
+
+    override fun getItemCount(): Int {
+        val count = snapshot().size
+        return count
+    }
+}

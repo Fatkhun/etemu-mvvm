@@ -28,7 +28,7 @@ import kotlin.compareTo
 
 class RegisterActivity : BaseActivity() {
 
-    lateinit var binding: ActivityRegisterBinding
+    private lateinit var binding: ActivityRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

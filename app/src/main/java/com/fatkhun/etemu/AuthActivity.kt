@@ -29,7 +29,7 @@ import com.google.android.material.textfield.TextInputLayout
 
 class AuthActivity : BaseActivity() {
 
-    lateinit var binding: ActivityAuthBinding
+    private lateinit var binding: ActivityAuthBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

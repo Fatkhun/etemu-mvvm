@@ -85,6 +85,62 @@
                     android:textAppearance="@style/subtitle_large"
                     android:textColor="@color/b_100" />
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/line_photo_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_200sdp"
+                    android:layout_margin="@dimen/_16sdp"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <com.github.chrisbanes.photoview.PhotoView
+                        android:id="@+id/pv_image_view"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerInside"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/line_twibbon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mb_take_photo"
+                        style="@style/Big.MaterialButton.Secondary"
+                        android:layout_width="match_parent"
+                        app:icon="@drawable/ic_photo_camera_24"
+                        app:iconGravity="textStart"
+                        app:iconSize="@dimen/_16sdp"
+                        android:textAppearance="@style/subtitle_medium"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:enabled="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:text="Ambil Foto"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mb_rotate_camera"
+                        style="@style/Big.MaterialButton.Secondary"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"
+                        app:icon="@drawable/ic_rotate_right_24"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        app:iconSize="@dimen/_18sdp"
+                        android:visibility="gone"
+                        tools:visibility="visible"/>
+                </LinearLayout>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -107,7 +163,7 @@
                         android:id="@+id/edt_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Masukkan nama lengkap"
+                        android:hint="Masukkan nama barang"
                         android:inputType="textCapWords|textPersonName"
                         android:maxLength="100"
                         android:paddingStart="@dimen/_9sdp"
@@ -129,19 +185,196 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
 
+                <LinearLayout
+                    android:id="@+id/lineStatusBarang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="Status Barang"
+                        android:textAppearance="@style/subtitle_small"
+                        android:textColor="@color/b_100"/>
+
+                    <RadioGroup
+                        android:id="@+id/rgStatusBarang"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rbStatusOpen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Open"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rbStatusComplete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Complete"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lineTipeBarang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="Tipe Barang"
+                        android:textAppearance="@style/subtitle_small"
+                        android:textColor="@color/b_100"/>
+
+                    <RadioGroup
+                        android:id="@+id/rgTipeBarang"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rbLost"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Lost (Hilang)"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rbFound"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Found (Temuan)"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lineKontak"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="Kontak"
+                        android:textAppearance="@style/subtitle_small"
+                        android:textColor="@color/b_100"/>
+
+                    <RadioGroup
+                        android:id="@+id/rgKontak"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rbWhatsapp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Whatsapp"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/rbTelegram"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Telegram"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100" />
+                    </RadioGroup>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_kontak"
+                        style="@style/CustomOutlineBoxV1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        app:boxStrokeColor="@color/box_input_stroke_color"
+                        app:endIconMode="clear_text"
+                        app:hintEnabled="false">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edt_kontak"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Masukkan nomor kontak"
+                            android:inputType="numberDecimal"
+                            android:maxLength="16"
+                            android:paddingStart="@dimen/_9sdp"
+                            android:paddingEnd="0dp"
+                            android:textAppearance="@style/body_medium"
+                            android:textColor="@color/b_100"
+                            android:textColorHint="@color/b_25" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/tv_error_kontak"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:text="Isi kontak dulu, yaa."
+                        android:textAppearance="@style/body_mini"
+                        android:textColor="@color/p_50"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lineKategoriBarang"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:text="Kategori Barang"
+                        android:textAppearance="@style/subtitle_small"
+                        android:textColor="@color/b_100" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cgKategori"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp" />
+                </LinearLayout>
+
                 <TextView
-                    android:id="@+id/tv_register_email"
+                    android:id="@+id/tvDeskripsiBarang"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:text="@string/app_text_register_email"
+                    android:text="Deskripsi"
                     android:textAppearance="@style/subtitle_small"
                     android:textColor="@color/b_100" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Pastikan email yang anda gunakan valid"
+                    android:text="Pastikan penjelasan singkat dan jelas"
                     android:textAppearance="@style/body_mini"
                     android:textColor="@color/b_75" />
 
@@ -151,38 +384,40 @@
                     android:layout_marginTop="@dimen/_4sdp">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_email"
                         style="@style/CustomOutlineBoxV1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="@color/box_input_stroke_color"
-                        app:endIconMode="clear_text"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="200"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edt_email"
+                            android:id="@+id/tie_review_resto"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Masukkan email anda"
-                            android:inputType="textEmailAddress"
-                            android:paddingStart="@dimen/_9sdp"
-                            android:paddingTop="@dimen/_14sdp"
-                            android:paddingEnd="0dp"
-                            android:paddingBottom="@dimen/_14sdp"
-                            android:textAppearance="@style/body_medium"
-                            android:textColor="@color/b_100"
-                            android:textColorHint="@color/b_25" />
+                            android:ems="10"
+                            android:gravity="top"
+                            android:textColorHint="@color/b_25"
+                            android:hint="Masukkan deskripsi detail tempatnya atau kronologinya"
+                            android:inputType="textMultiLine"
+                            android:lines="5"
+                            android:paddingLeft="@dimen/_12sdp"
+                            android:paddingTop="@dimen/_8sdp"
+                            android:paddingRight="@dimen/_12sdp"
+                            android:paddingBottom="@dimen/_8sdp"
+                            android:textAppearance="@style/body_small" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </FrameLayout>
 
                 <TextView
-                    android:id="@+id/tv_error_email"
+                    android:id="@+id/tv_error_deskripsi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:text="email anda tidak valid"
+                    android:text="Isi deksripsi dulu, yaa"
                     android:textAppearance="@style/body_mini"
                     android:textColor="@color/p_50"
                     android:visibility="gone"

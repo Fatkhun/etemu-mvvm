@@ -19,6 +19,14 @@ class StoreDataHelper(
         return isLogin
     }
 
+    fun getAuthToken(): String {
+        var data = ""
+        dataStoreViewModel.getSecureDataValue(PrefKey.AUTH_TOKEN, "") {
+            data = it
+        }
+        return data
+    }
+
     fun getDataUser(): UserItem {
         var user = UserItem()
         dataStoreViewModel.getSecureDataValue(PrefKey.DATA_USER, "") {
