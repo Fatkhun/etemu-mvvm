@@ -18,6 +18,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fatkhun.core.model.LostFoundForm
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.ui.BaseActivity
@@ -72,6 +73,7 @@ class MainActivity : BaseActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        binding.rvListItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvListItem.setHasFixedSize(true)
         binding.rvListItem.adapter = lostFoundPagingAdapter.withLoadStateFooter(
             footer = PagingLoadStateAdapter(lostFoundPagingAdapter)
