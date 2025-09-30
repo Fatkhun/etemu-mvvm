@@ -31,54 +31,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/main_search_bar_card"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_search"
+            style="@style/CustomOutlineBox10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            app:boxBackgroundColor="@color/d_100"
+            app:boxStrokeColor="@color/d_100"
             android:layout_weight="1"
-            app:cardUseCompatPadding="true"
-            app:cardCornerRadius="@dimen/_28sdp"
-            app:cardElevation="@dimen/_3sdp"
-            app:strokeColor="@color/d_100"
-            app:strokeWidth="@dimen/_1sdp">
+            android:layout_gravity="center_vertical"
+            app:boxStrokeWidth="@dimen/_1sdp"
+            app:boxStrokeWidthFocused="@dimen/_1sdp"
+            app:endIconTint="@color/b_50"
+            app:endIconDrawable="@drawable/ic_close_24"
+            app:endIconMode="clear_text"
+            app:hintEnabled="false"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconTint="@color/b_50"
+            app:startIconDrawable="@drawable/ic_search_filled">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:cursorVisible="true"
+                android:textColorHint="@color/b_50"
+                android:hint="Cari nama barang atau kategori"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textAppearance="@style/body_small" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_44sdp"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/_16sdp">
-
-                    <EditText
-                        android:id="@+id/edtSearch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:imeOptions="actionSearch"
-                        android:hint="Apa yang sedang kamu cari?"
-                        android:layout_marginVertical="@dimen/_8sdp"
-                        android:textAppearance="@style/body_medium"
-                        android:layout_gravity="center_vertical"
-                        android:textColor="@color/b_50"
-                        android:background="@null"/>
-
-                    <ImageView
-                        android:layout_width="@dimen/_24sdp"
-                        android:layout_height="@dimen/_24sdp"
-                        android:layout_weight="0"
-                        android:src="@drawable/ic_search_filled"
-                        app:tint="@color/b_50"
-                        android:layout_gravity="center_vertical"
-                        android:contentDescription="Search Icon"
-                        android:layout_marginStart="@dimen/_8sdp"/>
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
@@ -86,13 +71,13 @@
             android:layout_weight="0"
             android:contentDescription="filter"
             android:layout_marginEnd="@dimen/_12sdp"
-            app:maxImageSize="@dimen/_24sdp"
+            app:maxImageSize="@dimen/_16sdp"
             app:backgroundTint="@color/b_0"
             android:layout_gravity="center_vertical"
             app:elevation="@dimen/_3sdp"
             android:src="@drawable/ic_rounded_equal_24"
             app:tint="@color/b_50"
-            app:fabSize="normal"/>
+            app:fabSize="mini"/>
     </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -337,8 +322,8 @@
         android:src="@drawable/ic_rounded_add_24"
         app:backgroundTint="@color/s_75"
         app:tint="@color/b_0"
-        app:fabSize="normal"
-        app:maxImageSize="@dimen/_24sdp"
+        app:fabSize="mini"
+        app:maxImageSize="@dimen/_16sdp"
         app:elevation="@dimen/_4sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

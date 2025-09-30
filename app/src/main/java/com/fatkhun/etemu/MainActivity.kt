@@ -98,6 +98,13 @@ class MainActivity : BaseActivity() {
             }
             binding.rvListItem.isVisible = !displayEmpty && !binding.lytShimmer.isVisible
         }
+        binding.tilSearch.setEndIconOnClickListener {
+            binding.edtSearch.text?.clear()
+            searchTextInput = ""
+            binding.emptyViewSearch.gone()
+            isNewCreated = true
+            setupObserve(searchTextInput,searchCategory, searchStatus, searchType)
+        }
         binding.swipeLayout.setOnRefreshListener {
             onRefresh()
         }

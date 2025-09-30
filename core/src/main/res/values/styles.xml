@@ -424,6 +424,30 @@
 
     </style>
 
+    <style name="CustomOutlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_5sdp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_5sdp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_5sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_5sdp</item>
+        <item name="android:textColorHint">@color/d_100</item>
+        <item name="hintTextColor">@color/d_100</item>
+    </style>
+
+    <style name="CustomOutlineBox10" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">1dp</item>
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_32sdp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_32sdp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_32sdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_32sdp</item>
+        <item name="android:textColorHint">@color/d_100</item>
+        <item name="hintTextColor">@color/d_100</item>
+    </style>
+
     <style name="BottomDialogModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bg_modal_bottom</item>
     </style>
