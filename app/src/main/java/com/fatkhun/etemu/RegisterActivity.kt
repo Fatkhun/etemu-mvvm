@@ -88,7 +88,6 @@ class RegisterActivity : BaseActivity() {
             }
         }
         binding.edtPassword.afterTextChangedDebounce(1000, {
-            listenerRegisterDisable()
             binding.tilPassword.apply {
                 endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
                 setEndIconTintList(ContextCompat.getColorStateList(this@RegisterActivity, com.fatkhun.core.R.color.b_100))
@@ -183,7 +182,13 @@ class RegisterActivity : BaseActivity() {
     }
 
     private fun validUserPassword(value: String): Boolean {
-        return !(value.isBlank() || value.isEmpty())
+        return if(!(value.isBlank() || value.isEmpty())) {
+            binding.tvErrorPassword.gone()
+            true
+        } else {
+            binding.tvErrorPassword.visible()
+            false
+        }
     }
 
     private fun onBack() {

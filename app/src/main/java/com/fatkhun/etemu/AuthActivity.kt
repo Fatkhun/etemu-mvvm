@@ -70,7 +70,6 @@ class AuthActivity : BaseActivity() {
             }
         }
         binding.edtPassword.afterTextChangedDebounce(1000, {
-            listenerRegisterDisable()
             binding.tilPassword.apply {
                 endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
                 setEndIconTintList(ContextCompat.getColorStateList(this@AuthActivity, com.fatkhun.core.R.color.b_100))
@@ -94,6 +93,9 @@ class AuthActivity : BaseActivity() {
                     setEndIconTintList(ContextCompat.getColorStateList(this@AuthActivity, com.fatkhun.core.R.color.b_50))
                 }
             }
+        }
+        binding.tvDaftarDisini.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
@@ -158,6 +160,12 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun validUserPassword(value: String): Boolean {
-        return !(value.isBlank() || value.isEmpty())
+        return if (!(value.isBlank() || value.isEmpty())){
+            binding.tvErrorPassword.gone()
+            true
+        } else {
+            binding.tvErrorPassword.visible()
+            false
+        }
     }
 }
