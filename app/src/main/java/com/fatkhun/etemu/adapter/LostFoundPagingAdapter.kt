@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.fatkhun.core.R
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.utils.FormatDateTime
 import com.fatkhun.core.utils.load
@@ -47,9 +48,20 @@ class LostFoundPagingAdapter(
                 context,
                 datas.photoUrl
             )
+            if (datas.status == "open") {
+                if (datas.type == "lost") {
+                    binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_lost)
+                } else {
+                    binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_found)
+                }
+                binding.tvContentLabel.text = datas.type.uppercase()
+            } else {
+                binding.tvContentLabel.text = "complete".uppercase()
+                binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_complete)
+            }
             binding.itemTitle.text = setCustomeTextHTML(datas.name)
             binding.itemLocation.text = setCustomeTextHTML(datas.description)
-            binding.itemDate.text = FormatDateTime.getInfoTimeUtc(FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ, datas.createdAt)
+            binding.itemDate.text = FormatDateTime.getInfoTimeUtc(FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ, datas.updatedAt)
             binding.itemCategory.text = setCustomeTextHTML(datas.category.name)
             binding.mbDetail.setOnClickListener {
                 callback.onClickItem(pos, datas)

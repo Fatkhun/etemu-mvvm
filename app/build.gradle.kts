@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.swipe.refresh)
     implementation(libs.shimmer)
+    implementation(libs.gson)
     implementation(libs.glide)
     ksp(libs.glide.kapt)
     testImplementation(libs.junit)

@@ -1,6 +1,7 @@
 package com.fatkhun.core.network
 
 import com.fatkhun.core.model.BaseResponse
+import com.fatkhun.core.model.DetailItemResponse
 import com.fatkhun.core.model.LoginForm
 import com.fatkhun.core.model.LoginResponse
 import com.fatkhun.core.model.LostFoundResponse
@@ -13,8 +14,10 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.QueryMap
 
 interface ApiService {
@@ -51,5 +54,16 @@ interface ApiService {
     suspend fun getLostFoundPaging(
         @QueryMap primary_credential: MutableMap<String, String>
     ): LostFoundResponse
+
+    @GET("api/items/{id}")
+    fun getDetailItem(
+        @Path("id") id: String
+    ): Call<DetailItemResponse>
+
+    @PATCH("api/items/{id}")
+    fun updatePostingItem(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Call<BaseResponse>
 
 }

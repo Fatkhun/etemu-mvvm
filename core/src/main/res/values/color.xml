@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="bright_sun">#FAD332</color>
+    <color name="bright_yellow">#FFFC02</color>
+    <color name="carissma">#E888A6</color>
+    <color name="blue_google">#4285F4</color>
+    <color name="ice_dagger">#CFE5DE</color>
+    <color name="amour">#FDE8EA</color>
+    <color name="heaven_gates">#C8EFFE</color>
+    <color name="purplish_pink_shade">#FED4F6</color>
+    <color name="transparent_blue">#DDDCFF</color>
+    <color name="fine_linen">#F9F6C0</color>
+    <color name="fox_tails">#DD8400</color>
+    <color name="picton_blue">#4BB9EC</color>
+    <color name="champagne">#F9E7D2</color>
+    <color name="himalayan_mist">#E1F2ED</color>
+    <color name="light_bluish_green">#C6F7E8</color>
+    <color name="misty_rose">#FFE9EC</color>
+    <color name="teal_green">#17A87B</color>
+    <color name="humming_bird">#D2F9ED</color>
+    <color name="green_tint">#DEFCF3</color>
+    <color name="orange_pinata">#FF650C</color>
+
     <!--  primary  -->
     <color name="p_100">#870B0B</color>
     <color name="p_75">#A90D0D</color>

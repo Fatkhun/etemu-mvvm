@@ -7,4 +7,213 @@
     android:layout_height="match_parent"
     tools:context=".DetailPostingActivity">
 
+    <FrameLayout
+        android:id="@+id/frameImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:adjustViewBounds="true"
+            android:layout_margin="@dimen/_12sdp"
+            android:src="@drawable/ic_arrow_back_24"/>
+
+        <ImageView
+            android:id="@+id/ivBarang"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_ilus_general_warning"/>
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameImage">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/_12ssp"
+            android:paddingVertical="@dimen/_8sdp">
+
+            <TextView
+                android:id="@+id/tvNamaBarang"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/b_100"
+                android:textAppearance="@style/title_extra_large"
+                tools:text="I lost my hand bag sjhfbhsf"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/lytDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_access_time_filled_24"
+                        android:adjustViewBounds="true"
+                        app:tint="@color/b_25"/>
+                    <TextView
+                        android:id="@+id/tvDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@color/b_25"
+                        android:textAppearance="@style/body_medium"
+                        tools:text="2020-12-16"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    app:layout_constraintTop_toTopOf="@+id/lytDate"
+                    app:layout_constraintStart_toEndOf="@+id/lytDate"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="@dimen/_16sdp"
+                        android:layout_height="@dimen/_16sdp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_ballot_24"
+                        android:adjustViewBounds="true"
+                        app:tint="@color/b_25"/>
+                    <TextView
+                        android:id="@+id/tvCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/b_25"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:textAppearance="@style/body_medium"
+                        tools:text="Bag"/>
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/mcvUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:cardBackgroundColor="@color/b_0"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/_8sdp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivProfile"
+                        android:layout_width="@dimen/_55sdp"
+                        android:layout_height="@dimen/_55sdp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        app:tint="@color/b_25"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_supervised_user_circle_24"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearance="@style/RoundedImageViewShape" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mbContact"
+                        style="@style/Medium.MaterialButton.Primary.Outline"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_weight="1"
+                        android:text="Whatsapp"
+                        android:textAppearance="@style/subtitle_small"
+                        app:icon="@drawable/ic_call_24"
+                        app:iconGravity="textStart"
+                        app:iconSize="@dimen/_16sdp" />
+                    <TextView
+                        android:id="@+id/tvNamaPelapor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        tools:text="M Fatkhun Najaa"
+                        android:textColor="@color/b_100"
+                        android:textAppearance="@style/subtitle_large"/>
+                    <TextView
+                        android:id="@+id/tvEmailPelapor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        tools:text="mfatkhun@gmail.com"
+                        android:textColor="@color/b_50"
+                        android:textAppearance="@style/subtitle_middle"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/b_0"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/b_100"
+                        android:padding="@dimen/_8sdp"
+                        android:textAppearance="@style/title_medium"
+                        tools:text="Deskripsi lokasi atau kronologi"/>
+                    <TextView
+                        android:id="@+id/tvDeskripsi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/b_50"
+                        android:padding="@dimen/_8sdp"
+                        android:textAppearance="@style/subtitle_medium"
+                        tools:text="@tools:sample/lorem/random"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/mbDone"
+                style="@style/Medium.MaterialButton.Primary"
+                android:layout_width="match_parent"
+                android:enabled="true"
+                android:layout_margin="@dimen/_4sdp"
+                android:text="Selesaikan"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

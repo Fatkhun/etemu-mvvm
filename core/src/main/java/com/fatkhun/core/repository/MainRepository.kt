@@ -11,6 +11,7 @@ import androidx.paging.liveData
 import com.fatkhun.core.helper.NetworkHelper
 import com.fatkhun.core.helper.StoreDataHelper
 import com.fatkhun.core.model.BaseResponse
+import com.fatkhun.core.model.DetailItemResponse
 import com.fatkhun.core.model.LoginForm
 import com.fatkhun.core.model.LoginResponse
 import com.fatkhun.core.model.LostFoundForm
@@ -199,6 +200,84 @@ class MainRepository(
         return dataResponse
     }
 
+    fun getDetailItem(
+        itemId: String
+    ): MutableLiveData<Resource<DetailItemResponse>> {
+        val dataResponse = MutableLiveData<Resource<DetailItemResponse>>()
+
+        dataResponse.postValue(Resource.loading(null))
+        if (networkHelper.isNetworkConnected()) {
+            retrofitInstance.provideRetrofit(RetrofitInstance.DesClient.ETEMU)
+                .getDetailItem(itemId).enqueue(object : Callback<DetailItemResponse> {
+                    override fun onResponse(
+                        call: Call<DetailItemResponse>,
+                        response: Response<DetailItemResponse>
+                    ) {
+                        if (response.isSuccessAndNotNull()) {
+                            response.body()?.let {
+                                dataResponse.postValue(
+                                    Resource.success(
+                                        it,
+                                        response.code(),
+                                        (call.request() as Request)
+                                    )
+                                )
+                            }
+                        } else {
+                            response.errorBody()?.let {
+                                val raw = it.string()
+                                if (raw.isNotNull()) {
+                                    try {
+                                        val gson = Gson().fromJson(raw, DetailItemResponse::class.java)
+                                        dataResponse.postValue(
+                                            Resource.error(
+                                                response.message(),
+                                                response.code(),
+                                                gson,
+                                                (call.request() as Request)
+                                            )
+                                        )
+                                    }catch (e: Exception) {
+                                        dataResponse.postValue(
+                                            Resource.error(
+                                                response.message(),
+                                                response.code(),
+                                                null,
+                                                (call.request() as Request)
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    dataResponse.postValue(
+                                        Resource.error(
+                                            response.message(),
+                                            response.code(),
+                                            null,
+                                            (call.request() as Request)
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<DetailItemResponse>, t: Throwable) {
+                        dataResponse.postValue(
+                            Resource.error(
+                                t.message.toString(),
+                                0,
+                                null,
+                                (call.request() as Request)
+                            )
+                        )
+                    }
+                })
+        } else {
+            dataResponse.postValue(Resource.error("No internet connection", 0, null, null))
+        }
+        return dataResponse
+    }
+
     fun getLostFoundList(
         form: LostFoundForm
     ): MutableLiveData<Resource<LostFoundResponse>> {
@@ -306,6 +385,84 @@ class MainRepository(
             }
         ).liveData
         emitSource(pagingLive)
+    }
+
+    fun updatePostingItem(
+        token: String,
+        itemId: String
+    ): MutableLiveData<Resource<BaseResponse>> {
+        val dataResponse = MutableLiveData<Resource<BaseResponse>>()
+        dataResponse.postValue(Resource.loading(null))
+        if (networkHelper.isNetworkConnected()) {
+            retrofitInstance.provideRetrofit(RetrofitInstance.DesClient.ETEMU)
+                .updatePostingItem("Bearer $token", itemId).enqueue(object : Callback<BaseResponse> {
+                    override fun onResponse(
+                        call: Call<BaseResponse>,
+                        response: Response<BaseResponse>
+                    ) {
+                        if (response.isSuccessAndNotNull()) {
+                            response.body()?.let {
+                                dataResponse.postValue(
+                                    Resource.success(
+                                        it,
+                                        response.code(),
+                                        (call.request() as Request)
+                                    )
+                                )
+                            }
+                        } else {
+                            response.errorBody()?.let {
+                                val raw = it.string()
+                                if (raw.isNotNull()) {
+                                    try {
+                                        val gson = Gson().fromJson(raw, BaseResponse::class.java)
+                                        dataResponse.postValue(
+                                            Resource.error(
+                                                response.message(),
+                                                response.code(),
+                                                gson,
+                                                (call.request() as Request)
+                                            )
+                                        )
+                                    }catch (e: Exception) {
+                                        dataResponse.postValue(
+                                            Resource.error(
+                                                response.message(),
+                                                response.code(),
+                                                null,
+                                                (call.request() as Request)
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    dataResponse.postValue(
+                                        Resource.error(
+                                            response.message(),
+                                            response.code(),
+                                            null,
+                                            (call.request() as Request)
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                        dataResponse.postValue(
+                            Resource.error(
+                                t.message.toString(),
+                                0,
+                                null,
+                                (call.request() as Request)
+                            )
+                        )
+                    }
+                })
+        } else {
+            dataResponse.postValue(Resource.error("No internet connection", 0, null, null))
+        }
+        return dataResponse
     }
 
     fun postingItem(

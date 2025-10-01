@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -30,6 +31,7 @@ import com.fatkhun.core.utils.hideSoftKeyboard
 import com.fatkhun.core.utils.logError
 import com.fatkhun.core.utils.showing
 import com.fatkhun.core.utils.stoped
+import com.fatkhun.core.utils.toJson
 import com.fatkhun.etemu.adapter.LostFoundPagingAdapter
 import com.fatkhun.etemu.databinding.ActivityMainBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -58,7 +60,9 @@ class MainActivity : BaseActivity() {
             ) {
                 // todo
                 isNewCreated = false
-                startActivity(Intent(this@MainActivity, DetailPostingActivity::class.java))
+                startActivity(Intent(this@MainActivity, DetailPostingActivity::class.java)).apply {
+                    bundleOf("detail" to item.toJson())
+                }
             }
 
         })

@@ -17,8 +17,15 @@ data class LostFoundItemList(
     val photoUrl: String = "",
     val contact: ContactItem = ContactItem(),
     val status: String = "",
-    val owner: String = "",
-    val createdAt: String = ""
+    val owner: OwnerItem = OwnerItem(),
+    val createdAt: String = "",
+    val updatedAt: String = ""
+)
+
+data class OwnerItem(
+    val _id: String = "",
+    val name: String = "",
+    val email: String = ""
 )
 
 data class CategoryItem(

@@ -18,3 +18,7 @@ data class LostFoundForm(
     val limit: Int = 0,
     val offset: Int = 0
 )
+
+data class DetailItemResponse(
+    val data: LostFoundItemList = LostFoundItemList()
+): BaseResponse()

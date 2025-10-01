@@ -36,7 +36,7 @@ class RetrofitInstance(
         val gson = GsonBuilder().setLenient().create()
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl("http://192.168.100.57:8080/")
+            .baseUrl("http://192.168.105.237:8080/")
             .client(okHttpClients.provideClient())
             .build()
             .create(RetrofitRoutes::class.java)

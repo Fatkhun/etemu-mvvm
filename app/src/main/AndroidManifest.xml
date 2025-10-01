@@ -29,6 +29,9 @@
         android:theme="@style/Theme.Etemu"
         tools:replace="android:icon,android:allowBackup,android:roundIcon,android:name,android:theme">
         <activity
+            android:name=".HistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".DetailPostingActivity"
             android:exported="false" />
         <activity

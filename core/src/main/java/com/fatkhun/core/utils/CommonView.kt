@@ -7,6 +7,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -137,6 +138,83 @@ fun ShimmerFrameLayout.stoped() {
 fun ShimmerFrameLayout.showing() {
     this.startShimmer()
     this.visibility = View.VISIBLE
+}
+
+fun normalizationPhonePrefix62(phone: String): String {
+    var res = phone.replace("\\D".toRegex(), "")
+    if (res.startsWith("0")) {
+        res = "62" + res.substring(1)
+    } else if (res.startsWith("8")) {
+        res = "62$phone"
+    } else {
+        res = phone
+    }
+    return res
+}
+
+fun isNumber(input: String): Boolean {
+    val numberRegex = Regex("^[0-9]+$")
+    return numberRegex.matches(input)
+}
+
+fun isPackageInstalled(packageName: String, packageManager: PackageManager): Boolean {
+    return try {
+        packageManager.getPackageInfo(packageName, 0)
+        true
+    } catch (e: PackageManager.NameNotFoundException) {
+        false
+    }
+}
+
+fun openTelegramToUsername(activity: Activity, username: String) {
+    val pm = activity.packageManager
+    val tgPkgs = listOf("org.telegram.messenger", "org.thunderdog.challegram") // Telegram & Telegram X
+    val installed = tgPkgs.firstOrNull { isPackageInstalled(it, pm) }
+
+    if (installed == null) {
+        showSnackBar(activity, "Telegram belum dipasang")
+        return
+    }
+
+    // Link paling stabil untuk membuka chat user
+    val uri = Uri.parse("https://t.me/$username")
+    val intent = Intent(Intent.ACTION_VIEW, uri).apply { setPackage(installed) }
+    activity.startActivity(intent)
+}
+
+
+fun shareToTelegram(activity: Activity, message: String) {
+    val pm = activity.packageManager
+    val tgPkgs = listOf("org.telegram.messenger", "org.thunderdog.challegram")
+    val installed = tgPkgs.firstOrNull { isPackageInstalled(it, pm) }
+
+    if (installed == null) {
+        showSnackBar(activity, "Telegram belum dipasang")
+        return
+    }
+
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, message)
+        setPackage(installed)
+    }
+    activity.startActivity(Intent.createChooser(intent, "Kirim via Telegram"))
+}
+
+fun sendingMsgWA(activity: Activity, noHp: String, message: String) {
+    if (isPackageInstalled("com.whatsapp", activity.packageManager) || isPackageInstalled("com.whatsapp.w4b", activity.packageManager)) {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://api.whatsapp.com/send?phone=${noHp}&text=${message}")
+        )
+        if (isPackageInstalled("com.whatsapp", activity.packageManager))
+            intent.setPackage("com.whatsapp")
+        if (isPackageInstalled("com.whatsapp.w4b", activity.packageManager))
+            intent.setPackage("com.whatsapp.w4b")
+        activity.startActivity(intent)
+    } else {
+        showSnackBar(activity, "Whatsapp belum dipasang")
+    }
 }
 
 fun compatRegisterReceiver(

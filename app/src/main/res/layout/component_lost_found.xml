@@ -15,18 +15,46 @@
         android:orientation="horizontal">
 
         <!-- Gambar Item -->
-        <ImageView
-            android:id="@+id/item_image"
-            android:layout_width="@dimen/_120sdp"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            tools:srcCompat="@tools:sample/backgrounds/scenic"
-            android:contentDescription="Item Image"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/item_image"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/backgrounds/scenic"
+                android:contentDescription="Item Image"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clLabel"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:background="@drawable/bg_gradient_lost"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/item_image"
+                app:layout_constraintBottom_toBottomOf="@+id/item_image"
+                android:layout_marginHorizontal="@dimen/_12sdp">
+                <TextView
+                    android:id="@+id/tvContentLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center"
+                    android:textAppearance="@style/subtitle_middle"
+                    android:textColor="@color/b_0"
+                    tools:text="Lost" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Detail Item -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
@@ -122,8 +150,8 @@
                     android:id="@+id/mbDetail"
                     style="@style/Medium.MaterialButton.Primary"
                     android:layout_width="match_parent"
-                    android:enabled="false"
-                    android:text="Detail" />
+                    android:enabled="true"
+                    android:text="Lihat Detail" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
