@@ -58,11 +58,10 @@ class MainActivity : BaseActivity() {
                 pos: Int,
                 item: LostFoundItemList
             ) {
-                // todo
                 isNewCreated = false
-                startActivity(Intent(this@MainActivity, DetailPostingActivity::class.java)).apply {
-                    bundleOf("detail" to item.toJson())
-                }
+                startActivity(Intent(this@MainActivity, DetailPostingActivity::class.java).apply {
+                    putExtra("detail",item.toJson())
+                })
             }
 
         })
@@ -113,6 +112,9 @@ class MainActivity : BaseActivity() {
         }
         binding.swipeLayout.setOnRefreshListener {
             onRefresh()
+        }
+        binding.fabAddItem.setOnClickListener {
+            startActivity(Intent(this, PostingActivity::class.java))
         }
         setupSearch()
     }

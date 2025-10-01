@@ -18,8 +18,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.load.ImageHeaderParser
+import com.fatkhun.core.utils.showSnackBar
+import com.fatkhun.core.utils.showToast
 import com.fatkhun.etemu.databinding.ActivityCameraXactivityBinding
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -29,23 +33,24 @@ class CameraXActivity : AppCompatActivity() {
         const val KEY_RESULT_FILE = "KEY_RESULT_FILE"
         const val IS_FRONT = "is_front"
         private const val TAG = "CameraXBasic"
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 
     private lateinit var binding: ActivityCameraXactivityBinding
 
     private var imageCapture: ImageCapture? = null
-    private var currentCamera: Camera? = null
-    private var backCamera = true
+    private var cameraProvider: ProcessCameraProvider? = null
+    private var currentCameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var lensFacing = CameraSelector.LENS_FACING_BACK
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private var currentCamera: Camera? = null
 
     private val orientationEventListener by lazy {
         object : OrientationEventListener(this) {
             override fun onOrientationChanged(orientation: Int) {
-                if (orientation == ImageHeaderParser.UNKNOWN_ORIENTATION) {
-                    return
-                }
+                if (orientation == ORIENTATION_UNKNOWN) return
 
                 val rotation = when (orientation) {
                     in 45 until 135 -> Surface.ROTATION_270
@@ -55,6 +60,7 @@ class CameraXActivity : AppCompatActivity() {
                 }
 
                 imageCapture?.targetRotation = rotation
+                updateFlashlightAvailability()
             }
         }
     }
@@ -64,49 +70,87 @@ class CameraXActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityCameraXactivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.ivBack.setOnClickListener {
-            onBackPressed()
-        }
-        val isFront = intent.getBooleanExtra(IS_FRONT, false)
-        startCamera(if (isFront) CameraSelector.DEFAULT_FRONT_CAMERA else CameraSelector.DEFAULT_BACK_CAMERA)
 
-        binding.cbFlashlight.setOnCheckedChangeListener { _, isChecked ->
-            currentCamera?.cameraControl?.enableTorch(isChecked)
-        }
-        binding.btnCapture.setOnClickListener { takePhoto() }
+        setupViews()
+        initializeCamera()
 
         outputDirectory = getOutputDirectory()
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
+    private fun setupViews() {
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+
+        binding.cbFlashlight.setOnCheckedChangeListener { _, isChecked ->
+            currentCamera?.cameraControl?.enableTorch(isChecked)
+        }
+
+        binding.btnCapture.setOnClickListener {
+            takePhoto()
+        }
+
+        binding.ivChangeCamera.setOnClickListener {
+            switchCamera()
+        }
+    }
+
+    private fun initializeCamera() {
+        val isFront = intent.getBooleanExtra(IS_FRONT, false)
+        currentCameraSelector = if (isFront) {
+            CameraSelector.DEFAULT_FRONT_CAMERA
+        } else {
+            CameraSelector.DEFAULT_BACK_CAMERA
+        }
+        lensFacing = if (isFront) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
+
+        startCamera()
+    }
+
     private fun takePhoto() {
-        // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
-        // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(outputDirectory).build()
+        // Create time-stamped output file
+        val photoFile = File(
+            outputDirectory,
+            SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(System.currentTimeMillis()) + ".jpg"
+        )
 
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+
+        // Disable capture button to prevent multiple captures
+        binding.btnCapture.isEnabled = false
+
+        // Set up image capture listener
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    runOnUiThread {
+                        binding.btnCapture.isEnabled = true
+                        showSnackBar(
+                            this@CameraXActivity,
+                            "Photo capture failed: ${exc.message}"
+                        )
+                    }
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(outputDirectory)
+                    val savedUri = Uri.fromFile(photoFile)
                     Log.d(TAG, "Photo capture succeeded: $savedUri")
 
                     val resultIntent = Intent().apply {
-                        putExtra(KEY_RESULT_FILE, savedUri.path)
+                        putExtra(KEY_RESULT_FILE, savedUri.toString())
                     }
                     setResult(RESULT_OK, resultIntent)
                     finish()
@@ -114,59 +158,76 @@ class CameraXActivity : AppCompatActivity() {
             })
     }
 
-    private fun startCamera(cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA) {
+    private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            // Preview
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                }
-
-            imageCapture = ImageCapture.Builder()
-                .build()
-
             try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
+                cameraProvider = cameraProviderFuture.get()
 
-                // Bind use cases to camera
-                currentCamera = cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture
+                // Unbind use cases before rebinding
+                cameraProvider?.unbindAll()
+
+                // Preview
+                val preview = Preview.Builder()
+                    .build()
+                    .also {
+                        it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                    }
+
+                imageCapture = ImageCapture.Builder()
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                    .build()
+
+                // Select camera based on current selector
+                val camera = cameraProvider?.bindToLifecycle(
+                    this, currentCameraSelector, preview, imageCapture
                 )
 
-                backCamera = cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
-
-                binding.ivChangeCamera.setOnClickListener {
-                    if (backCamera) {
-                        startCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
-                    } else {
-                        startCamera()
-                    }
-                }
+                currentCamera = camera
+                updateFlashlightAvailability()
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
+                showSnackBar(
+                    this,
+                    "Camera initialization failed"
+                )
             }
-
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun getOutputDirectory(): File {
-        val privateTempDir = File(cacheDir, resources.getString(R.string.app_name))
-        if (!privateTempDir.exists()) privateTempDir.mkdirs()
+    private fun switchCamera() {
+        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+            CameraSelector.LENS_FACING_FRONT
+        } else {
+            CameraSelector.LENS_FACING_BACK
+        }
 
-        return File.createTempFile(
-            "${resources.getString(R.string.app_name).lowercase()}_tmp_" +
-                    "${System.currentTimeMillis()}",
-            ".jpg",
-            privateTempDir
-        )
+        currentCameraSelector = CameraSelector.Builder()
+            .requireLensFacing(lensFacing)
+            .build()
+
+        startCamera()
+    }
+
+    private fun updateFlashlightAvailability() {
+        val hasFlash = currentCamera?.cameraInfo?.hasFlashUnit() == true
+        binding.cbFlashlight.isEnabled = hasFlash
+        if (!hasFlash) {
+            binding.cbFlashlight.isChecked = false
+        }
+    }
+
+    private fun getOutputDirectory(): File {
+        val mediaDir = externalMediaDirs.firstOrNull()?.let {
+            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
+        }
+        return if (mediaDir != null && mediaDir.exists()) {
+            mediaDir
+        } else {
+            filesDir
+        }
     }
 
     override fun onStart() {
@@ -182,6 +243,7 @@ class CameraXActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+        // Clean up camera provider
+        cameraProvider?.unbindAll()
     }
-
 }

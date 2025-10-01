@@ -126,7 +126,7 @@ class PostingActivity : BaseActivity() {
         }
     }
 
-    private fun shareTwibbon(activity: Activity) {
+    private fun sendPosting(activity: Activity) {
         callToShare(activity) {
             CoroutineScope(Dispatchers.Main).launch {
                 it?.let {
@@ -194,12 +194,12 @@ class PostingActivity : BaseActivity() {
                     // cek android 14
                     showLoading()
                     if (PermissionHelper.allPermissionsGranted(this@PostingActivity, PermissionHelper.DOWNLOAD_REQUIRED_PERMISSIONS)) {
-                        shareTwibbon(activity)
+                        sendPosting(activity)
                     } else {
                         PermissionHelper(activity).requestDownloadPermission { isGrant ->
                             if (isGrant) {
                                 // Permission granted, proceed with the action
-                                shareTwibbon(activity)
+                                sendPosting(activity)
                             } else {
                                 showCustomDialog(activity,
                                     "Tidak Dapat Mengakses Penyimpanan",

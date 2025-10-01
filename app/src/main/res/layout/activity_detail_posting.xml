@@ -16,18 +16,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="@dimen/_24sdp"
-            android:layout_height="@dimen/_24sdp"
-            android:adjustViewBounds="true"
-            android:layout_margin="@dimen/_12sdp"
-            android:src="@drawable/ic_arrow_back_24"/>
-
-        <ImageView
             android:id="@+id/ivBarang"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_200sdp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_ilus_general_warning"/>
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:adjustViewBounds="true"
+            android:layout_margin="@dimen/_12sdp"
+            app:tint="@color/b_100"
+            android:src="@drawable/ic_arrow_back_24"/>
     </FrameLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -125,6 +127,14 @@
                     android:orientation="vertical"
                     android:padding="@dimen/_8sdp">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/b_100"
+                        android:padding="@dimen/_8sdp"
+                        android:textAppearance="@style/title_medium"
+                        android:text="Informasi yang bisa dihubungi"/>
+
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/ivProfile"
                         android:layout_width="@dimen/_55sdp"
@@ -192,7 +202,7 @@
                         android:textColor="@color/b_100"
                         android:padding="@dimen/_8sdp"
                         android:textAppearance="@style/title_medium"
-                        tools:text="Deskripsi lokasi atau kronologi"/>
+                        android:text="Deskripsi lokasi atau kronologi"/>
                     <TextView
                         android:id="@+id/tvDeskripsi"
                         android:layout_width="match_parent"

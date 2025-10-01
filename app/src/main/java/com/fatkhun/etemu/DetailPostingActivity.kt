@@ -20,12 +20,14 @@ import com.fatkhun.core.utils.handleApiCallback
 import com.fatkhun.core.utils.isNumber
 import com.fatkhun.core.utils.isPackageInstalled
 import com.fatkhun.core.utils.load
+import com.fatkhun.core.utils.logError
 import com.fatkhun.core.utils.normalizationPhonePrefix62
 import com.fatkhun.core.utils.openTelegramToUsername
 import com.fatkhun.core.utils.sendingMsgWA
 import com.fatkhun.core.utils.setCustomeTextHTML
 import com.fatkhun.core.utils.shareToTelegram
 import com.fatkhun.core.utils.showSnackBar
+import com.fatkhun.core.utils.toJson
 import com.fatkhun.etemu.databinding.ActivityDetailPostingBinding
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
@@ -53,6 +55,7 @@ class DetailPostingActivity : BaseActivity() {
         }catch (_: Exception){
             LostFoundItemList()
         }
+        logError("detail ${dataItem.toJson()}")
         if (dataItem.contact.type.contains("whatsapp")) {
             binding.mbContact.apply {
                 text = "Whatsapp"
@@ -105,6 +108,9 @@ class DetailPostingActivity : BaseActivity() {
                     }
                 }
         }
+        binding.ivBack.setOnClickListener {
+            onBackPressed()
+        }
         getDetailData(dataItem._id)
     }
 
@@ -122,8 +128,8 @@ class DetailPostingActivity : BaseActivity() {
                         res?.data?.let {
                             binding.ivBarang.load(this, it.photoUrl)
                             binding.tvNamaBarang.text = setCustomeTextHTML(it.name)
-                            binding.tvDate.text = FormatDateTime.parse(FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ,
-                                FormatDateTime.FORMAT_DATE_TIME_DMYHM_LONG_MONTH, it.updatedAt)
+                            binding.tvDate.text = FormatDateTime.parse(it.updatedAt,FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ,
+                                FormatDateTime.FORMAT_DATE_TIME_DMYHM_LONG_MONTH_NO_SEPARATOR)
                             binding.tvCategory.text = it.category.name
                             binding.tvNamaPelapor.text = it.owner.name
                             binding.tvEmailPelapor.text = it.owner.email
