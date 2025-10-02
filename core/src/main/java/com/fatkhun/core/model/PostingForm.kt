@@ -19,6 +19,6 @@ data class LostFoundForm(
     val offset: Int = 0
 )
 
-data class DetailItemResponse(
-    val data: LostFoundItemList = LostFoundItemList()
-): BaseResponse()
+data class PostingUpdateForm(
+    val status: String = ""
+)

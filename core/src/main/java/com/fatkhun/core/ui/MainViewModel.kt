@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.fatkhun.core.model.BaseResponse
+import com.fatkhun.core.model.CategoriesResponse
 import com.fatkhun.core.model.DetailItemResponse
 import com.fatkhun.core.model.LoginForm
 import com.fatkhun.core.model.LoginResponse
@@ -15,6 +16,7 @@ import com.fatkhun.core.model.LostFoundForm
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.model.LostFoundResponse
 import com.fatkhun.core.model.PostingItemForm
+import com.fatkhun.core.model.PostingUpdateForm
 import com.fatkhun.core.model.RegisterForm
 import com.fatkhun.core.model.RegisterResponse
 import com.fatkhun.core.repository.DataStoreRepository
@@ -37,6 +39,10 @@ class MainViewModel(
         form: LoginForm
     ): MutableLiveData<Resource<LoginResponse>> {
         return mainRepository.loginUser(form)
+    }
+
+    fun getCategoryList(): MutableLiveData<Resource<CategoriesResponse>> {
+        return mainRepository.getCategoryList()
     }
 
     fun getDetailItem(
@@ -89,9 +95,9 @@ class MainViewModel(
     }
 
     fun updatePostingItem(
-        token: String, itemId: String
+        token: String, itemId: String, form: PostingUpdateForm
     ): MutableLiveData<Resource<BaseResponse>> {
-        return mainRepository.updatePostingItem(token, itemId)
+        return mainRepository.updatePostingItem(token, itemId, form)
     }
 
 }

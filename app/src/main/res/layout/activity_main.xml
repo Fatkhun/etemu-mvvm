@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:cursorVisible="true"
                 android:textColorHint="@color/b_50"
-                android:hint="Cari nama barang atau kategori"
+                android:hint="Cari nama barang"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
@@ -70,12 +70,27 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:contentDescription="filter"
-            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             app:maxImageSize="@dimen/_16sdp"
             app:backgroundTint="@color/b_0"
             android:layout_gravity="center_vertical"
             app:elevation="@dimen/_3sdp"
             android:src="@drawable/ic_rounded_equal_24"
+            app:tint="@color/b_50"
+            app:fabSize="mini"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fbRiwayat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:contentDescription="riwayat"
+            android:layout_marginEnd="@dimen/_12sdp"
+            app:maxImageSize="@dimen/_16sdp"
+            app:backgroundTint="@color/b_0"
+            android:layout_gravity="center_vertical"
+            app:elevation="@dimen/_3sdp"
+            android:src="@drawable/ic_history_edu_24"
             app:tint="@color/b_50"
             app:fabSize="mini"/>
     </LinearLayout>

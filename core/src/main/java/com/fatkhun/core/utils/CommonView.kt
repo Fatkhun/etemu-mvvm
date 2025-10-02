@@ -528,13 +528,16 @@ fun EditText.afterTextChangedDebounce(
         textFlow
             .debounce(delayMillis)
             .map { it.trim() }
+            .filter { it.isNotBlank() }
             .collect { input(it) }
     }
 
     this.addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(editable: Editable?) {
             editable?.toString()?.let { newText ->
-                scope.launch { textFlow.emit(newText) }
+                if (newText.isNotBlank()) {
+                    scope.launch { textFlow.emit(newText) }
+                }
             }
         }
 

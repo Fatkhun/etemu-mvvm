@@ -37,3 +37,7 @@ data class ContactItem(
     val type: String = "",
     val value: String = ""
 )
+
+data class DetailItemResponse(
+    val data: LostFoundItemList = LostFoundItemList()
+): BaseResponse()

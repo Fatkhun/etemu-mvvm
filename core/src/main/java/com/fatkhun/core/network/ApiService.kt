@@ -1,10 +1,13 @@
 package com.fatkhun.core.network
 
 import com.fatkhun.core.model.BaseResponse
+import com.fatkhun.core.model.CategoriesResponse
 import com.fatkhun.core.model.DetailItemResponse
 import com.fatkhun.core.model.LoginForm
 import com.fatkhun.core.model.LoginResponse
 import com.fatkhun.core.model.LostFoundResponse
+import com.fatkhun.core.model.PostingItemForm
+import com.fatkhun.core.model.PostingUpdateForm
 import com.fatkhun.core.model.RegisterForm
 import com.fatkhun.core.model.RegisterResponse
 import okhttp3.MultipartBody
@@ -63,7 +66,8 @@ interface ApiService {
     @PATCH("api/items/{id}")
     fun updatePostingItem(
         @Header("Authorization") token: String,
-        @Path("id") id: String
+        @Path("id") id: String,
+        @Body form: PostingUpdateForm
     ): Call<BaseResponse>
 
     @GET("api/items/history")
@@ -71,5 +75,8 @@ interface ApiService {
         @Header("Authorization") token: String,
         @QueryMap primary_credential: MutableMap<String, String>
     ): LostFoundResponse
+
+    @GET("api/categories")
+    fun getCategoryList(): Call<CategoriesResponse>
 
 }

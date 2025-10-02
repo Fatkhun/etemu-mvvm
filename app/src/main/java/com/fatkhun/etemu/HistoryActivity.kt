@@ -1,5 +1,6 @@
 package com.fatkhun.etemu
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,15 +13,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fatkhun.core.helper.PermissionHelper
 import com.fatkhun.core.model.LostFoundForm
 import com.fatkhun.core.model.LostFoundItemList
+import com.fatkhun.core.model.PostingUpdateForm
 import com.fatkhun.core.ui.BaseActivity
 import com.fatkhun.core.ui.PagingLoadStateAdapter
 import com.fatkhun.core.utils.AlertDialogInterface
 import com.fatkhun.core.utils.Constant
+import com.fatkhun.core.utils.RC
+import com.fatkhun.core.utils.RemoteCallback
+import com.fatkhun.core.utils.dialogAlertOneButton
 import com.fatkhun.core.utils.gone
+import com.fatkhun.core.utils.handleApiCallback
 import com.fatkhun.core.utils.logError
 import com.fatkhun.core.utils.showCustomDialog
 import com.fatkhun.core.utils.showing
 import com.fatkhun.core.utils.stoped
+import com.fatkhun.core.utils.toJson
 import com.fatkhun.etemu.adapter.HistoryPagingAdapter
 import com.fatkhun.etemu.databinding.ActivityHistoryBinding
 import kotlinx.coroutines.delay
@@ -41,8 +48,11 @@ class HistoryActivity : BaseActivity() {
                 pos: Int,
                 item: LostFoundItemList
             ) {
-                isNewCreated = false
-                //TODO("Not yet implemented")
+                startActivity(Intent(this@HistoryActivity, DetailPostingActivity::class.java).apply {
+                    putExtra("detail",item.toJson())
+                    putExtra("is_claimed", if (item.status.lowercase() == "claimed") 1 else 0)
+                    putExtra("is_history", true)
+                })
             }
 
             override fun onClickDone(
@@ -57,7 +67,33 @@ class HistoryActivity : BaseActivity() {
                     false,
                     object : AlertDialogInterface {
                         override fun onPositiveButtonClicked() {
-                            // todo api
+                            mainVM.updatePostingItem(storeDataHelper.getAuthToken(), item._id,
+                                PostingUpdateForm(status = "claimed")).observe(this@HistoryActivity) { response ->
+                                handleApiCallback(
+                                    this@HistoryActivity,
+                                    response,
+                                    true,
+                                    object : RemoteCallback<String> {
+                                        override fun do_callback(id: Int, t: String) {}
+                                        override fun failed_callback(id: Int, t: String) {}
+                                    }) { res, code ->
+                                    if (code == RC().SUCCESS) {
+                                        onBackPressed()
+                                    } else {
+                                        res?.let {
+                                            dialogAlertOneButton(
+                                                this@HistoryActivity,
+                                                com.fatkhun.core.R.drawable.ic_ilus_general_warning,
+                                                it.message,
+                                                "",
+                                                "Mengerti"
+                                            ) {
+                                                it.dismiss()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         override fun onNegativeButtonClicked() {}
@@ -75,6 +111,15 @@ class HistoryActivity : BaseActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        binding.tvTitleToolbar.text = "Riwayatmu"
+        binding.ivBack.setOnClickListener {
+            onBackPressed()
+        }
+        binding.swipeLayout.setOnRefreshListener {
+            isNewCreated = true
+            setupObserve(searchTextInput, searchCategory, searchStatus, searchType)
+            binding.swipeLayout.isRefreshing = false
         }
         binding.rvListItem.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.rvListItem.setHasFixedSize(true)

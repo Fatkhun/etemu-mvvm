@@ -116,6 +116,9 @@ class MainActivity : BaseActivity() {
         binding.fabAddItem.setOnClickListener {
             startActivity(Intent(this, PostingActivity::class.java))
         }
+        binding.fbRiwayat.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
         setupSearch()
     }
 
