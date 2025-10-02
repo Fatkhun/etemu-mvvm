@@ -66,4 +66,10 @@ interface ApiService {
         @Path("id") id: String
     ): Call<BaseResponse>
 
+    @GET("api/items/history")
+    suspend fun getHistoryListPaging(
+        @Header("Authorization") token: String,
+        @QueryMap primary_credential: MutableMap<String, String>
+    ): LostFoundResponse
+
 }

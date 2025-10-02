@@ -118,13 +118,13 @@ class CameraXActivity : AppCompatActivity() {
         val imageCapture = imageCapture ?: return
 
         // Create time-stamped output file
-        val photoFile = File(
+        /*val photoFile = File(
             outputDirectory,
             SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(System.currentTimeMillis()) + ".jpg"
-        )
+        )*/
 
         // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(outputDirectory).build()
 
         // Disable capture button to prevent multiple captures
         binding.btnCapture.isEnabled = false
@@ -146,7 +146,7 @@ class CameraXActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(photoFile)
+                    val savedUri = Uri.fromFile(outputDirectory)
                     Log.d(TAG, "Photo capture succeeded: $savedUri")
 
                     val resultIntent = Intent().apply {

@@ -6,19 +6,17 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.fatkhun.core.R
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.utils.FormatDateTime
-import com.fatkhun.core.utils.load
 import com.fatkhun.core.utils.setCustomeTextHTML
-import com.fatkhun.etemu.databinding.ComponentLostFoundBinding
+import com.fatkhun.etemu.databinding.ComponentHistoryBinding
 
-class LostFoundPagingAdapter(
+class HistoryPagingAdapter(
     private val context: Context,
     private val callback: Callback
-): PagingDataAdapter<LostFoundItemList, LostFoundPagingAdapter.ViewHolder>(LostFoundDiffCallback()) {
+): PagingDataAdapter<LostFoundItemList, HistoryPagingAdapter.ViewHolder>(DiffCallback()) {
 
-    class LostFoundDiffCallback : DiffUtil.ItemCallback<LostFoundItemList>() {
+    class DiffCallback : DiffUtil.ItemCallback<LostFoundItemList>() {
         override fun areItemsTheSame(oldItem: LostFoundItemList, newItem: LostFoundItemList): Boolean {
             return oldItem._id == newItem._id
         }
@@ -29,14 +27,14 @@ class LostFoundPagingAdapter(
         ): Boolean {
             return oldItem == newItem
         }
-
     }
 
     interface Callback {
         fun onClickItem(pos: Int, item: LostFoundItemList)
+        fun onClickDone(pos: Int, item: LostFoundItemList)
     }
 
-    inner class ViewHolder(val binding: ComponentLostFoundBinding) :
+    inner class ViewHolder(val binding: ComponentHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindView(
@@ -44,34 +42,23 @@ class LostFoundPagingAdapter(
             pos: Int,
             callback: Callback
         ) {
-            binding.itemImage.load(
-                context,
-                datas.photoUrl
-            )
-            if (datas.status.lowercase() == "open") {
-                if (datas.type.lowercase() == "lost") {
-                    binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_lost)
-                } else {
-                    binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_found)
-                }
-                binding.tvContentLabel.text = datas.type.uppercase()
-            } else {
-                binding.tvContentLabel.text = "complete".uppercase()
-                binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_complete)
-            }
             binding.itemTitle.text = setCustomeTextHTML(datas.name)
             binding.itemLocation.text = setCustomeTextHTML(datas.description)
-            binding.itemDate.text = FormatDateTime.getInfoTimeUtc(FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ, datas.updatedAt)
+            binding.itemDate.text = FormatDateTime.parse(datas.updatedAt, FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ,
+                FormatDateTime.FORMAT_DATE_TIME_DMYHM_SHORT_MONTH_NO_SEPARATOR)
             binding.itemCategory.text = setCustomeTextHTML(datas.category.name)
             binding.mbDetail.setOnClickListener {
                 callback.onClickItem(pos, datas)
+            }
+            binding.mbDone.setOnClickListener {
+                callback.onClickDone(pos, datas)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ComponentLostFoundBinding.inflate(
+            ComponentHistoryBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
@@ -87,4 +74,5 @@ class LostFoundPagingAdapter(
         val count = snapshot().size
         return count
     }
+
 }

@@ -66,6 +66,22 @@ class MainViewModel(
         keyLostFoundLive.value = KeyLostFound(form)
     }
 
+    // Buat key sederhana agar memicu query hanya saat kamu set explicit
+    data class KeyHistory(
+        val token: String,
+        val form: LostFoundForm
+    )
+    private val keyHistoryLive = MutableLiveData<KeyHistory>()
+    // Stream Paging; tidak buat Pager baru kecuali key diganti
+    val pagingHistory: LiveData<PagingData<LostFoundItemList>> =
+        keyHistoryLive.switchMap { k ->
+            mainRepository.getHistoryListPaging(k.token,k.form)
+                .cachedIn(viewModelScope) // cache di scope VM
+        }
+    fun submitKeyHistory(token: String, form: LostFoundForm) {
+        keyHistoryLive.value = KeyHistory(token, form)
+    }
+
     fun postingItem(
         token: String, form: PostingItemForm
     ): MutableLiveData<Resource<BaseResponse>> {

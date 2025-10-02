@@ -39,7 +39,7 @@
             android:textColor="@color/b_25"
             android:lines="1"
             android:ellipsize="end"
-            tools:text="Hilang di perpustakaan lt.1"/>
+            tools:text="Hilang di perpustakaan lt.1 Hilang di perpustakaan lt.1"/>
     </LinearLayout>
 
     <LinearLayout

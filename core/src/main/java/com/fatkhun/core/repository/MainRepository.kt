@@ -22,6 +22,7 @@ import com.fatkhun.core.model.RegisterForm
 import com.fatkhun.core.model.RegisterResponse
 import com.fatkhun.core.network.RetrofitInstance
 import com.fatkhun.core.network.RetrofitRoutes
+import com.fatkhun.core.ui.HistoryPagingSource
 import com.fatkhun.core.ui.LostFoundPagingSource
 import com.fatkhun.core.utils.Constant
 import com.fatkhun.core.utils.Resource
@@ -381,6 +382,30 @@ class MainRepository(
                 LostFoundPagingSource(
                     service = { api },
                     form
+                )
+            }
+        ).liveData
+        emitSource(pagingLive)
+    }
+
+    fun getHistoryListPaging(
+        token: String,
+        form: LostFoundForm
+    ): LiveData<PagingData<LostFoundItemList>> = liveData(Dispatchers.IO){
+        val api: RetrofitRoutes =
+            retrofitInstance.provideRetrofits(RetrofitInstance.DesClient.ETEMU)
+
+        val pagingLive = Pager(
+            config = PagingConfig(
+                pageSize = Constant.PAGE_HALF_SIZE,
+                initialLoadSize = Constant.PAGE_SIZE,
+                prefetchDistance = Constant.PAGE_HALF_SIZE * 3,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                HistoryPagingSource(
+                    service = { api },
+                    token, form
                 )
             }
         ).liveData
