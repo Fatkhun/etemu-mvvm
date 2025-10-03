@@ -6,6 +6,7 @@ import com.fatkhun.core.utils.PrefKey
 import com.fatkhun.core.utils.logError
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -24,14 +25,6 @@ class RetrofitInstance(
         }
     }
 
-    private fun fetchUrl(urlKey: Preferences.Key<String>, blankCount: Int = 0): String {
-        var base = ""
-        dataStoreViewModel.getSecureDataValue(urlKey, "http://localhost:8080/") { base = it }.toString()
-        logError("baseUrl: $base")
-
-        return if (base.isBlank() && blankCount < 3) fetchUrl(urlKey, blankCount + 1) else base
-    }
-
     private fun buildRetrofit(url: String): RetrofitRoutes {
         val gson = GsonBuilder().setLenient().create()
         return Retrofit.Builder()
@@ -42,9 +35,9 @@ class RetrofitInstance(
             .create(RetrofitRoutes::class.java)
     }
 
-    fun provideRetrofit(desClient: DesClient = DesClient.ETEMU, blankCount: Int = 0): RetrofitRoutes {
+    fun provideRetrofit(desClient: DesClient = DesClient.ETEMU): RetrofitRoutes {
         val urlKey = getBaseUrl(desClient)
-        val url = fetchUrl(urlKey, blankCount)
+        val url = runBlocking { fetchUrlSuspend(urlKey) }
         return buildRetrofit(url.ifBlank { "https://" })
     }
 
@@ -58,7 +51,7 @@ class RetrofitInstance(
     private suspend fun fetchUrlSuspend(urlKey: Preferences.Key<String>): String {
         var base = ""
         dataStoreViewModel.getSecureDataValue(urlKey, "") { base = it }.toString()
-        delay(200)
+        delay(100)
         logError("baseUrl: $base")
         return base
     }
