@@ -10,7 +10,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fatkhun.core.model.LostFoundItemList
+import com.fatkhun.core.model.PostingUpdateForm
 import com.fatkhun.core.ui.BaseActivity
+import com.fatkhun.core.utils.AlertDialogInterface
 import com.fatkhun.core.utils.FormatDateTime
 import com.fatkhun.core.utils.RC
 import com.fatkhun.core.utils.RemoteCallback
@@ -26,8 +28,10 @@ import com.fatkhun.core.utils.openTelegramToUsername
 import com.fatkhun.core.utils.sendingMsgWA
 import com.fatkhun.core.utils.setCustomeTextHTML
 import com.fatkhun.core.utils.shareToTelegram
+import com.fatkhun.core.utils.showCustomDialog
 import com.fatkhun.core.utils.showSnackBar
 import com.fatkhun.core.utils.toJson
+import com.fatkhun.core.utils.visible
 import com.fatkhun.etemu.databinding.ActivityDetailPostingBinding
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
@@ -38,6 +42,7 @@ class DetailPostingActivity : BaseActivity() {
 
     private lateinit var binding: ActivityDetailPostingBinding
     private var dataItem: LostFoundItemList = LostFoundItemList()
+    private var isClaimed: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,12 +55,23 @@ class DetailPostingActivity : BaseActivity() {
         }
         val intent = intent.extras
         val detail = intent?.getString("detail", "")
+        val isClaimed = intent?.getInt("is_claimed", 0)
+        val isHistory = intent?.getBoolean("is_history")
         dataItem = try {
             Gson().fromJson(detail.toString(), LostFoundItemList::class.java)
         }catch (_: Exception){
             LostFoundItemList()
         }
-        logError("detail ${dataItem.toJson()}")
+        logError("detail ${dataItem.toJson()} __ $isClaimed")
+        if (isHistory == true) {
+            if (isClaimed == 1) {
+                binding.mbDone.gone()
+            } else {
+                binding.mbDone.visible()
+            }
+        } else {
+            binding.mbDone.gone()
+        }
         if (dataItem.contact.type.contains("whatsapp")) {
             binding.mbContact.apply {
                 text = "Whatsapp"
@@ -81,32 +97,45 @@ class DetailPostingActivity : BaseActivity() {
             }
         }
         binding.mbDone.setOnClickListener {
-            mainVM.updatePostingItem(storeDataHelper.getAuthToken(), dataItem._id).observe(this) { response ->
-                handleApiCallback(
-                    this,
-                    response,
-                    true,
-                    object : RemoteCallback<String> {
-                        override fun do_callback(id: Int, t: String) {}
-                        override fun failed_callback(id: Int, t: String) {}
-                    }) { res, code ->
-                        if (code == RC().SUCCESS) {
-                            onBackPressed()
-                        } else {
-                            res?.let {
-                                dialogAlertOneButton(
-                                    this,
-                                    com.fatkhun.core.R.drawable.ic_ilus_general_warning,
-                                    it.message,
-                                    "",
-                                    "Mengerti"
-                                ) {
-                                    it.dismiss()
+            showCustomDialog(this,
+                "Apakah ingin menyelesaikan laporan?",
+                "Ubah status menjadi complete untuk menyelesaikan laporan",
+                "Iya, Lanjutkan",
+                "Batal",
+                false,
+                object : AlertDialogInterface {
+                    override fun onPositiveButtonClicked() {
+                        mainVM.updatePostingItem(storeDataHelper.getAuthToken(), dataItem._id,
+                            PostingUpdateForm(status = "claimed")).observe(this@DetailPostingActivity) { response ->
+                            handleApiCallback(
+                                this@DetailPostingActivity,
+                                response,
+                                true,
+                                object : RemoteCallback<String> {
+                                    override fun do_callback(id: Int, t: String) {}
+                                    override fun failed_callback(id: Int, t: String) {}
+                                }) { res, code ->
+                                if (code == RC().SUCCESS) {
+                                    onBackPressed()
+                                } else {
+                                    res?.let {
+                                        dialogAlertOneButton(
+                                            this@DetailPostingActivity,
+                                            com.fatkhun.core.R.drawable.ic_ilus_general_warning,
+                                            it.message,
+                                            "",
+                                            "Mengerti"
+                                        ) {
+                                            it.dismiss()
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
+
+                    override fun onNegativeButtonClicked() {}
+                })
         }
         binding.ivBack.setOnClickListener {
             onBackPressed()
@@ -132,7 +161,7 @@ class DetailPostingActivity : BaseActivity() {
                                 FormatDateTime.FORMAT_DATE_TIME_DMYHM_LONG_MONTH_NO_SEPARATOR)
                             binding.tvCategory.text = it.category.name
                             binding.tvNamaPelapor.text = it.owner.name
-                            binding.tvEmailPelapor.text = it.owner.email
+                            binding.tvStatus.text = if (it.status.lowercase() == "claimed") "complete".uppercase() else it.status.uppercase()
                             binding.tvDeskripsi.text = setCustomeTextHTML(it.description)
                         }
                     } else {

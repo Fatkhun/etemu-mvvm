@@ -11,6 +11,7 @@ import androidx.paging.liveData
 import com.fatkhun.core.helper.NetworkHelper
 import com.fatkhun.core.helper.StoreDataHelper
 import com.fatkhun.core.model.BaseResponse
+import com.fatkhun.core.model.CategoriesResponse
 import com.fatkhun.core.model.DetailItemResponse
 import com.fatkhun.core.model.LoginForm
 import com.fatkhun.core.model.LoginResponse
@@ -18,6 +19,7 @@ import com.fatkhun.core.model.LostFoundForm
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.model.LostFoundResponse
 import com.fatkhun.core.model.PostingItemForm
+import com.fatkhun.core.model.PostingUpdateForm
 import com.fatkhun.core.model.RegisterForm
 import com.fatkhun.core.model.RegisterResponse
 import com.fatkhun.core.network.RetrofitInstance
@@ -185,6 +187,82 @@ class MainRepository(
                     }
 
                     override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                        dataResponse.postValue(
+                            Resource.error(
+                                t.message.toString(),
+                                0,
+                                null,
+                                (call.request() as Request)
+                            )
+                        )
+                    }
+                })
+        } else {
+            dataResponse.postValue(Resource.error("No internet connection", 0, null, null))
+        }
+        return dataResponse
+    }
+
+    fun getCategoryList(): MutableLiveData<Resource<CategoriesResponse>> {
+        val dataResponse = MutableLiveData<Resource<CategoriesResponse>>()
+
+        dataResponse.postValue(Resource.loading(null))
+        if (networkHelper.isNetworkConnected()) {
+            retrofitInstance.provideRetrofit(RetrofitInstance.DesClient.ETEMU)
+                .getCategoryList().enqueue(object : Callback<CategoriesResponse> {
+                    override fun onResponse(
+                        call: Call<CategoriesResponse>,
+                        response: Response<CategoriesResponse>
+                    ) {
+                        if (response.isSuccessAndNotNull()) {
+                            response.body()?.let {
+                                dataResponse.postValue(
+                                    Resource.success(
+                                        it,
+                                        response.code(),
+                                        (call.request() as Request)
+                                    )
+                                )
+                            }
+                        } else {
+                            response.errorBody()?.let {
+                                val raw = it.string()
+                                if (raw.isNotNull()) {
+                                    try {
+                                        val gson = Gson().fromJson(raw, CategoriesResponse::class.java)
+                                        dataResponse.postValue(
+                                            Resource.error(
+                                                response.message(),
+                                                response.code(),
+                                                gson,
+                                                (call.request() as Request)
+                                            )
+                                        )
+                                    }catch (e: Exception) {
+                                        dataResponse.postValue(
+                                            Resource.error(
+                                                response.message(),
+                                                response.code(),
+                                                null,
+                                                (call.request() as Request)
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    dataResponse.postValue(
+                                        Resource.error(
+                                            response.message(),
+                                            response.code(),
+                                            null,
+                                            (call.request() as Request)
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<CategoriesResponse>, t: Throwable) {
                         dataResponse.postValue(
                             Resource.error(
                                 t.message.toString(),
@@ -414,13 +492,14 @@ class MainRepository(
 
     fun updatePostingItem(
         token: String,
-        itemId: String
+        itemId: String,
+        form: PostingUpdateForm
     ): MutableLiveData<Resource<BaseResponse>> {
         val dataResponse = MutableLiveData<Resource<BaseResponse>>()
         dataResponse.postValue(Resource.loading(null))
         if (networkHelper.isNetworkConnected()) {
             retrofitInstance.provideRetrofit(RetrofitInstance.DesClient.ETEMU)
-                .updatePostingItem("Bearer $token", itemId).enqueue(object : Callback<BaseResponse> {
+                .updatePostingItem("Bearer $token", itemId, form).enqueue(object : Callback<BaseResponse> {
                     override fun onResponse(
                         call: Call<BaseResponse>,
                         response: Response<BaseResponse>
@@ -498,9 +577,19 @@ class MainRepository(
         try {
             // Prepare the file part
             val path = form.file_evidence_path
-            val file = File(path) // Replace with your file path
-            val requestFile = file.asRequestBody("image/jpg".toMediaTypeOrNull())
-            val filePart = MultipartBody.Part.createFormData("file_evidence", file.name, requestFile)
+            val filePart: MultipartBody.Part = try {
+                val file = File(path)
+                if (path.isNotEmpty() && file.exists()) {
+                    val requestFile = file.asRequestBody("image/jpg".toMediaTypeOrNull())
+                    MultipartBody.Part.createFormData("file_evidence", file.name, requestFile)
+                } else {
+                    throw IllegalArgumentException("File path is empty or file doesn't exist")
+                }
+            } catch (e: Exception) {
+                // Fallback ke empty part
+                val emptyRequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("file_evidence", "", emptyRequestBody)
+            }
 
             // Prepare other parts
             val categoryId = form.categoryId.toRequestBody("text/plain".toMediaTypeOrNull())

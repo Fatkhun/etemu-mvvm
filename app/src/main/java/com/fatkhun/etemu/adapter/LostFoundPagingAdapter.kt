@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fatkhun.core.R
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.utils.FormatDateTime
+import com.fatkhun.core.utils.disable
+import com.fatkhun.core.utils.enable
 import com.fatkhun.core.utils.load
 import com.fatkhun.core.utils.setCustomeTextHTML
 import com.fatkhun.etemu.databinding.ComponentLostFoundBinding
@@ -55,17 +57,24 @@ class LostFoundPagingAdapter(
                     binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_found)
                 }
                 binding.tvContentLabel.text = datas.type.uppercase()
+                binding.mbDetail.apply {
+                    enable()
+                    setOnClickListener {
+                        callback.onClickItem(pos, datas)
+                    }
+                }
             } else {
                 binding.tvContentLabel.text = "complete".uppercase()
                 binding.clLabel.setBackgroundResource(R.drawable.bg_gradient_complete)
+                binding.mbDetail.apply {
+                    disable()
+                    setOnClickListener(null)
+                }
             }
             binding.itemTitle.text = setCustomeTextHTML(datas.name)
             binding.itemLocation.text = setCustomeTextHTML(datas.description)
             binding.itemDate.text = FormatDateTime.getInfoTimeUtc(FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ, datas.updatedAt)
             binding.itemCategory.text = setCustomeTextHTML(datas.category.name)
-            binding.mbDetail.setOnClickListener {
-                callback.onClickItem(pos, datas)
-            }
         }
     }
 

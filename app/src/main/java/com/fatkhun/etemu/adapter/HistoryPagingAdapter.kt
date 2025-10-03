@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.utils.FormatDateTime
+import com.fatkhun.core.utils.gone
 import com.fatkhun.core.utils.setCustomeTextHTML
+import com.fatkhun.core.utils.visible
 import com.fatkhun.etemu.databinding.ComponentHistoryBinding
 
 class HistoryPagingAdapter(
@@ -47,6 +49,12 @@ class HistoryPagingAdapter(
             binding.itemDate.text = FormatDateTime.parse(datas.updatedAt, FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ,
                 FormatDateTime.FORMAT_DATE_TIME_DMYHM_SHORT_MONTH_NO_SEPARATOR)
             binding.itemCategory.text = setCustomeTextHTML(datas.category.name)
+            binding.tvStatus.text = if (datas.status.lowercase() == "claimed") "complete".uppercase() else datas.status.uppercase()
+            if (datas.status.lowercase() == "open") {
+                binding.mbDone.visible()
+            } else {
+                binding.mbDone.gone()
+            }
             binding.mbDetail.setOnClickListener {
                 callback.onClickItem(pos, datas)
             }

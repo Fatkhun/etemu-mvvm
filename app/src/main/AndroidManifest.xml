@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="       androidx.camera.camera2, androidx.camera.core,       androidx.camera.view, androidx.camera.lifecycle" />
+    <uses-sdk tools:overrideLibrary="androidx.camera.camera2,androidx.camera.core,androidx.camera.view,androidx.camera.lifecycle" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -12,6 +12,21 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent>
+    </queries>
 
     <application
         android:name=".AppApplication"

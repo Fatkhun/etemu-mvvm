@@ -4,4 +4,9 @@
     <string name="app_text_register_pass"><![CDATA[Password<font color="#CB1010">*</font>]]></string>
     <string name="app_text_register_email"><![CDATA[Email<font color="#CB1010">*</font>]]></string>
     <string name="no_camera_exists">No Application exists for camera!</string>
+    <string name="app_text_nama_barang"><![CDATA[Nama Barang<font color="#CB1010">*</font>]]></string>
+    <string name="app_text_deskripsi"><![CDATA[Deskripsi<font color="#CB1010">*</font>]]></string>
+    <string name="app_text_tipe_barang"><![CDATA[Tipe Barang<font color="#CB1010">*</font>]]></string>
+    <string name="app_text_kontak"><![CDATA[Kontak yang Dihubungi<font color="#CB1010">*</font>]]></string>
+    <string name="app_text_kategori_barang"><![CDATA[Kategori Barang<font color="#CB1010">*</font>]]></string>
 </resources>

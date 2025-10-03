@@ -7,12 +7,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.fatkhun.core.helper.StoreDataHelper
 import com.fatkhun.core.ui.BaseActivity
 import com.fatkhun.core.ui.DataStoreViewModel
 import com.fatkhun.core.utils.PrefKey
 import com.fatkhun.core.utils.logError
 import com.fatkhun.etemu.databinding.ActivitySplashAppBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SplashAppActivity : BaseActivity() {
 
@@ -28,21 +33,25 @@ class SplashAppActivity : BaseActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val idUser = storeDataHelper.getDataUser().id
-        logError("id_user $idUser")
-        if (idUser.isNotEmpty() && idUser != "0") {
-            if (storeDataHelper.isLoginUser() == "1") {
-                preferenceVM.setSecureDataValue(PrefKey.IS_LOGIN, "1")
+        runBlocking {
+            val idUser = storeDataHelper.getDataUser().id
+            val isLogin = storeDataHelper.isLoginUser()
+            delay(2000)
+            logError("id_user $idUser __ ${isLogin}")
+            if (idUser.isNotEmpty() && idUser != "0") {
+                if (storeDataHelper.isLoginUser() == "1") {
+                    preferenceVM.setSecureDataValue(PrefKey.IS_LOGIN, "1")
+                } else {
+                    preferenceVM.setSecureDataValue(PrefKey.IS_LOGIN, "0")
+                }
+                val intent = Intent(this@SplashAppActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
             } else {
-                preferenceVM.setSecureDataValue(PrefKey.IS_LOGIN, "0")
+                val intent = Intent(this@SplashAppActivity, AuthActivity::class.java)
+                startActivity(intent)
+                finish()
             }
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        } else {
-            val intent = Intent(this, AuthActivity::class.java)
-            startActivity(intent)
-            finish()
         }
     }
 }

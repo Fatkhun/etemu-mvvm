@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.load.ImageHeaderParser
+import com.fatkhun.core.utils.logError
 import com.fatkhun.core.utils.showSnackBar
 import com.fatkhun.core.utils.showToast
 import com.fatkhun.etemu.databinding.ActivityCameraXactivityBinding
@@ -117,11 +118,11 @@ class CameraXActivity : AppCompatActivity() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        // Create time-stamped output file
-        /*val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(System.currentTimeMillis()) + ".jpg"
-        )*/
+        // Ensure that the preview surface is properly configured and available
+        if (binding.viewFinder.surfaceProvider == null) {
+            logError("Surface provider is not available.")
+            return
+        }
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(outputDirectory).build()
@@ -147,7 +148,7 @@ class CameraXActivity : AppCompatActivity() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(outputDirectory)
-                    Log.d(TAG, "Photo capture succeeded: $savedUri")
+                    logError("Photo capture succeeded: $savedUri")
 
                     val resultIntent = Intent().apply {
                         putExtra(KEY_RESULT_FILE, savedUri.toString())
@@ -162,22 +163,22 @@ class CameraXActivity : AppCompatActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
+            cameraProvider = cameraProviderFuture.get()
+
+            // Preview
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                }
+
+            imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .build()
             try {
-                cameraProvider = cameraProviderFuture.get()
 
                 // Unbind use cases before rebinding
                 cameraProvider?.unbindAll()
-
-                // Preview
-                val preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
-                    }
-
-                imageCapture = ImageCapture.Builder()
-                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                    .build()
 
                 // Select camera based on current selector
                 val camera = cameraProvider?.bindToLifecycle(
