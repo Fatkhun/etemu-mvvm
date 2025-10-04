@@ -29,7 +29,7 @@ class RetrofitInstance(
         val gson = GsonBuilder().setLenient().create()
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl("http://192.168.100.57:8080/")
+            .baseUrl(url)
             .client(okHttpClients.provideClient())
             .build()
             .create(RetrofitRoutes::class.java)
@@ -38,14 +38,14 @@ class RetrofitInstance(
     fun provideRetrofit(desClient: DesClient = DesClient.ETEMU): RetrofitRoutes {
         val urlKey = getBaseUrl(desClient)
         val url = runBlocking { fetchUrlSuspend(urlKey) }
-        return buildRetrofit(url.ifBlank { "https://" })
+        return buildRetrofit("http://192.168.100.46:8080/")
     }
 
     suspend fun provideRetrofits(desClient: DesClient = DesClient.ETEMU): RetrofitRoutes {
         val urlKey = getBaseUrl(desClient)
         val url = fetchUrlSuspend(urlKey)
         logError("provideRetrofit: $url")
-        return buildRetrofit(url)
+        return buildRetrofit("http://192.168.100.46:8080/")
     }
 
     private suspend fun fetchUrlSuspend(urlKey: Preferences.Key<String>): String {

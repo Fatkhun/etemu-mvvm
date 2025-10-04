@@ -21,6 +21,16 @@
         android:adjustViewBounds="true"
         android:contentDescription="Header Illustration"/>
 
+    <ImageView
+        android:id="@+id/ivLogout"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_logout_24"
+        android:layout_margin="@dimen/_12sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <!-- Search Bar -->
     <LinearLayout
         android:id="@+id/lineSearch"
@@ -66,6 +76,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fbFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
@@ -266,7 +277,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Tidak ditemukan resto berdasarkan filter kamu "
+                                android:text="Tidak ditemukan barang berdasarkan filter kamu "
                                 android:textAlignment="center"
                                 android:textAppearance="@style/title_medium"
                                 android:textColor="@color/b_50" />
@@ -294,9 +305,7 @@
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/lyt_shimmer"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:visibility="gone"
-                        tools:visibility="gone">
+                        android:layout_height="wrap_content">
 
                         <LinearLayout
                             android:layout_width="match_parent"

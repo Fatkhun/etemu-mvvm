@@ -8,6 +8,7 @@ import com.fatkhun.core.model.LoginResponse
 import com.fatkhun.core.model.LostFoundResponse
 import com.fatkhun.core.model.PostingItemForm
 import com.fatkhun.core.model.PostingUpdateForm
+import com.fatkhun.core.model.PostingUpdateStatusForm
 import com.fatkhun.core.model.RegisterForm
 import com.fatkhun.core.model.RegisterResponse
 import okhttp3.MultipartBody
@@ -20,6 +21,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
 
@@ -39,12 +41,13 @@ interface ApiService {
     @POST("api/items")
     fun postingItem(
         @Header("Authorization") token: String,
-        @Part("categoryId") categoryId: RequestBody,
+        @Part("id") categoryId: RequestBody,
         @Part("type") type: RequestBody,
         @Part("name") name: RequestBody,
         @Part("description") description: RequestBody,
-        @Part("contactType") contactType: RequestBody,
-        @Part("contactValue") contactValue: RequestBody,
+        @Part("contact_type") contactType: RequestBody,
+        @Part("contact_value") contactValue: RequestBody,
+        @Part("user_id") ownerId: RequestBody,
         @Part photo: MultipartBody.Part? // File (optional)
     ): Call<BaseResponse>
 
@@ -63,11 +66,20 @@ interface ApiService {
         @Path("id") id: String
     ): Call<DetailItemResponse>
 
+    @Multipart
     @PATCH("api/items/{id}")
     fun updatePostingItem(
         @Header("Authorization") token: String,
         @Path("id") id: String,
-        @Body form: PostingUpdateForm
+        @PartMap parts: Map<String, RequestBody>,
+        @Part photo: MultipartBody.Part?
+    ): Call<BaseResponse>
+
+    @PATCH("api/items/{id}")
+    fun updateStatusPostingItem(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+        @Body form: PostingUpdateStatusForm
     ): Call<BaseResponse>
 
     @GET("api/items/history")

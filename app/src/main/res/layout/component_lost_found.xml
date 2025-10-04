@@ -135,6 +135,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/b_25"
                     android:layout_marginStart="@dimen/_4sdp"
+                    android:lines="1"
+                    android:ellipsize="end"
                     android:textAppearance="@style/body_medium"
                     tools:text="Bag"/>
             </LinearLayout>

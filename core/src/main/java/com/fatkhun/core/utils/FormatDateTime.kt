@@ -65,6 +65,7 @@ object FormatDateTime {
     const val FORMAT_TIME_HM_NO_SEPARATOR = "HHmm"
     const val FORMAT_DATE_TIME_GMT = "EEE MMM dd HH:mm:ss zzz yyyy"
     const val FORMAT_DATE_TIME_WIB = "EEE MMM dd HH:mm:ss z yyyy"
+    const val FORMAT_DATE_TIME_WITH_TIME_ZONE = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX"
 
     private const val SECOND_MILLIS = 1000
     private const val MINUTE_MILLIS = 60 * SECOND_MILLIS
@@ -601,7 +602,7 @@ object FormatDateTime {
 
         if (days > 0) {
             if (days > 7) {
-                return format(parse(date, FORMAT_DATE_TIME_YMDTHMSZ), FORMAT_DATE_DMY_SLASH)
+                return format(parse(date, FORMAT_DATE_TIME_WITH_TIME_ZONE), FORMAT_DATE_DMY_SLASH)
             }
             return "$days hari"
         }

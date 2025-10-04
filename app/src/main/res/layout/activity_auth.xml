@@ -36,23 +36,16 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_150sdp"
-                android:adjustViewBounds="true"
                 android:layout_marginTop="@dimen/_52sdp"
-                android:src="@drawable/ic_ilus_general_warning"/>
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_logo_etemu" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:paddingVertical="@dimen/_12sdp">
-
-                <TextView
-                    android:id="@+id/tv_subtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Login dahulu untuk menikmati fiturnya"
-                    android:textAppearance="@style/subtitle_large"
-                    android:textColor="@color/b_100" />
 
                 <TextView
                     android:id="@+id/tv_login_email"

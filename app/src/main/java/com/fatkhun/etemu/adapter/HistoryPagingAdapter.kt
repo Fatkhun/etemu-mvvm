@@ -20,7 +20,7 @@ class HistoryPagingAdapter(
 
     class DiffCallback : DiffUtil.ItemCallback<LostFoundItemList>() {
         override fun areItemsTheSame(oldItem: LostFoundItemList, newItem: LostFoundItemList): Boolean {
-            return oldItem._id == newItem._id
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(
@@ -34,6 +34,7 @@ class HistoryPagingAdapter(
     interface Callback {
         fun onClickItem(pos: Int, item: LostFoundItemList)
         fun onClickDone(pos: Int, item: LostFoundItemList)
+        fun onClickEdit(pos: Int, item: LostFoundItemList)
     }
 
     inner class ViewHolder(val binding: ComponentHistoryBinding) :
@@ -46,20 +47,25 @@ class HistoryPagingAdapter(
         ) {
             binding.itemTitle.text = setCustomeTextHTML(datas.name)
             binding.itemLocation.text = setCustomeTextHTML(datas.description)
-            binding.itemDate.text = FormatDateTime.parse(datas.updatedAt, FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ,
+            binding.itemDate.text = FormatDateTime.parse(datas.updated_at, FormatDateTime.FORMAT_DATE_TIME_WITH_TIME_ZONE,
                 FormatDateTime.FORMAT_DATE_TIME_DMYHM_SHORT_MONTH_NO_SEPARATOR)
-            binding.itemCategory.text = setCustomeTextHTML(datas.category.name)
+            binding.itemCategory.text = setCustomeTextHTML(datas.category_id.name)
             binding.tvStatus.text = if (datas.status.lowercase() == "claimed") "complete".uppercase() else datas.status.uppercase()
             if (datas.status.lowercase() == "open") {
                 binding.mbDone.visible()
+                binding.ivEdit.visible()
             } else {
                 binding.mbDone.gone()
+                binding.ivEdit.gone()
             }
             binding.mbDetail.setOnClickListener {
                 callback.onClickItem(pos, datas)
             }
             binding.mbDone.setOnClickListener {
                 callback.onClickDone(pos, datas)
+            }
+            binding.ivEdit.setOnClickListener {
+                callback.onClickEdit(pos, datas)
             }
         }
     }

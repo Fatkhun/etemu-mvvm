@@ -2,6 +2,7 @@ package com.fatkhun.etemu
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,6 +15,7 @@ import com.fatkhun.core.helper.PermissionHelper
 import com.fatkhun.core.model.LostFoundForm
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.model.PostingUpdateForm
+import com.fatkhun.core.model.PostingUpdateStatusForm
 import com.fatkhun.core.ui.BaseActivity
 import com.fatkhun.core.ui.PagingLoadStateAdapter
 import com.fatkhun.core.utils.AlertDialogInterface
@@ -38,7 +40,7 @@ class HistoryActivity : BaseActivity() {
     private lateinit var binding: ActivityHistoryBinding
     private var isNewCreated = true
     private var searchTextInput = ""
-    private var searchCategory = ""
+    private var searchCategory = 0
     private var searchStatus = ""
     private var searchType = ""
 
@@ -67,8 +69,8 @@ class HistoryActivity : BaseActivity() {
                     false,
                     object : AlertDialogInterface {
                         override fun onPositiveButtonClicked() {
-                            mainVM.updatePostingItem(storeDataHelper.getAuthToken(), item._id,
-                                PostingUpdateForm(status = "claimed")).observe(this@HistoryActivity) { response ->
+                            mainVM.updateStatusPostingItem(storeDataHelper.getAuthToken(), item.id.toString(),
+                                PostingUpdateStatusForm(status = "claimed")).observe(this@HistoryActivity) { response ->
                                 handleApiCallback(
                                     this@HistoryActivity,
                                     response,
@@ -100,13 +102,27 @@ class HistoryActivity : BaseActivity() {
                     })
             }
 
+            override fun onClickEdit(
+                pos: Int,
+                item: LostFoundItemList
+            ) {
+                startActivity(Intent(this@HistoryActivity, PostingActivity::class.java).apply {
+                    putExtra("detail", item.toJson())
+                    putExtra("is_edit", true)
+                })
+            }
+
         })
     }
+
+    override fun getLayoutId(): View {
+        binding = ActivityHistoryBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityHistoryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -152,13 +168,14 @@ class HistoryActivity : BaseActivity() {
         }
     }
 
-    private fun setupObserve(searchText: String, categoryId: String, status: String, type: String) {
+    private fun setupObserve(searchText: String, categoryId: Int, status: String, type: String) {
         if (isNewCreated) getItemList(searchText, categoryId, status, type)
     }
 
-    private fun getItemList(search: String, categoryId: String, status: String, type: String) {
+    private fun getItemList(search: String, categoryId: Int, status: String, type: String) {
         val form = LostFoundForm(
             keyword = search,
+            user_id = storeDataHelper.getDataUser().id,
             category_id = categoryId,
             status = status,
             type = type,

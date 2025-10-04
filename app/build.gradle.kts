@@ -92,6 +92,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.multidex)
     implementation(libs.koin)
+    implementation(libs.sdp)
+    implementation(libs.ssp)
     implementation(libs.koin.scope)
     implementation(libs.koin.viewmodel)
     implementation(libs.androidx.datastore.preferences)

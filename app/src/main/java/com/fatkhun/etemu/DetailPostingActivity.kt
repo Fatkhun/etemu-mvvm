@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -11,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.model.PostingUpdateForm
+import com.fatkhun.core.model.PostingUpdateStatusForm
 import com.fatkhun.core.ui.BaseActivity
 import com.fatkhun.core.utils.AlertDialogInterface
 import com.fatkhun.core.utils.FormatDateTime
@@ -42,12 +44,14 @@ class DetailPostingActivity : BaseActivity() {
 
     private lateinit var binding: ActivityDetailPostingBinding
     private var dataItem: LostFoundItemList = LostFoundItemList()
-    private var isClaimed: Int = 0
+    override fun getLayoutId(): View {
+        binding = ActivityDetailPostingBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityDetailPostingBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -72,12 +76,12 @@ class DetailPostingActivity : BaseActivity() {
         } else {
             binding.mbDone.gone()
         }
-        if (dataItem.contact.type.contains("whatsapp")) {
+        if (dataItem.contact_type.contains("whatsapp")) {
             binding.mbContact.apply {
                 text = "Whatsapp"
                 icon = ContextCompat.getDrawable(this@DetailPostingActivity, com.fatkhun.core.R.drawable.ic_call_24)
             }
-        } else if (dataItem.contact.type.contains("telegram")) {
+        } else if (dataItem.contact_type.contains("telegram")) {
             binding.mbContact.apply {
                 text = "Telegram"
                 icon = ContextCompat.getDrawable(this@DetailPostingActivity, com.fatkhun.core.R.drawable.ic_supervised_user_circle_24)
@@ -86,13 +90,13 @@ class DetailPostingActivity : BaseActivity() {
             binding.mbContact.gone()
         }
         binding.mbContact.setOnClickListener {
-            if (dataItem.contact.type.contains("whatsapp")) {
-                sendingMsgWA(this, normalizationPhonePrefix62(dataItem.contact.value),"")
+            if (dataItem.contact_type.contains("whatsapp")) {
+                sendingMsgWA(this, normalizationPhonePrefix62(dataItem.contact_value),"")
             } else {
-                if (isNumber(dataItem.contact.value)) {
+                if (isNumber(dataItem.contact_value)) {
                     shareToTelegram(this, "")
                 } else {
-                    openTelegramToUsername(this,dataItem.contact.value)
+                    openTelegramToUsername(this,dataItem.contact_value)
                 }
             }
         }
@@ -105,8 +109,8 @@ class DetailPostingActivity : BaseActivity() {
                 false,
                 object : AlertDialogInterface {
                     override fun onPositiveButtonClicked() {
-                        mainVM.updatePostingItem(storeDataHelper.getAuthToken(), dataItem._id,
-                            PostingUpdateForm(status = "claimed")).observe(this@DetailPostingActivity) { response ->
+                        mainVM.updateStatusPostingItem(storeDataHelper.getAuthToken(), dataItem.id.toString(),
+                            PostingUpdateStatusForm(status = "claimed")).observe(this@DetailPostingActivity) { response ->
                             handleApiCallback(
                                 this@DetailPostingActivity,
                                 response,
@@ -140,7 +144,7 @@ class DetailPostingActivity : BaseActivity() {
         binding.ivBack.setOnClickListener {
             onBackPressed()
         }
-        getDetailData(dataItem._id)
+        getDetailData(dataItem.id.toString())
     }
 
     private fun getDetailData(id: String) {
@@ -155,12 +159,12 @@ class DetailPostingActivity : BaseActivity() {
                 }) { res, code ->
                     if(code == RC().SUCCESS) {
                         res?.data?.let {
-                            binding.ivBarang.load(this, it.photoUrl)
+                            binding.ivBarang.load(this, it.photo_url)
                             binding.tvNamaBarang.text = setCustomeTextHTML(it.name)
-                            binding.tvDate.text = FormatDateTime.parse(it.updatedAt,FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ,
+                            binding.tvDate.text = FormatDateTime.parse(it.updated_at,FormatDateTime.FORMAT_DATE_TIME_WITH_TIME_ZONE,
                                 FormatDateTime.FORMAT_DATE_TIME_DMYHM_LONG_MONTH_NO_SEPARATOR)
-                            binding.tvCategory.text = it.category.name
-                            binding.tvNamaPelapor.text = it.owner.name
+                            binding.tvCategory.text = it.category_id.name
+                            binding.tvNamaPelapor.text = it.owner_id.name
                             binding.tvStatus.text = if (it.status.lowercase() == "claimed") "complete".uppercase() else it.status.uppercase()
                             binding.tvDeskripsi.text = setCustomeTextHTML(it.description)
                         }

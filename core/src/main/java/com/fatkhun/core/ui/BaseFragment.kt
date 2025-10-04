@@ -23,10 +23,7 @@ open class BaseFragment : Fragment(), View.OnClickListener {
     val storeDataHelper by inject<StoreDataHelper>()
     private var loadingDialog: LoadingDialog? = null
     private var baseActivity: BaseActivity? = null
-    var mIsVisibleToUser: Boolean = false
-    var useTopEdge: Boolean = true
-    var useBottomEdge: Boolean = true
-    var useCompatibility: Boolean = false
+    private var mIsVisibleToUser: Boolean = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -44,14 +41,6 @@ open class BaseFragment : Fragment(), View.OnClickListener {
     ): View? {
         mIsVisibleToUser = true
         return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        getBaseActivity()?.applyEdgeToEdgeInsets(useTopEdge, useBottomEdge)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM && useCompatibility) {
-            view.fitsSystemWindows = true
-        }
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDestroyView() {

@@ -20,6 +20,7 @@ import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.model.LostFoundResponse
 import com.fatkhun.core.model.PostingItemForm
 import com.fatkhun.core.model.PostingUpdateForm
+import com.fatkhun.core.model.PostingUpdateStatusForm
 import com.fatkhun.core.model.RegisterForm
 import com.fatkhun.core.model.RegisterResponse
 import com.fatkhun.core.network.RetrofitInstance
@@ -30,11 +31,13 @@ import com.fatkhun.core.utils.Constant
 import com.fatkhun.core.utils.Resource
 import com.fatkhun.core.utils.isNotNull
 import com.fatkhun.core.utils.isSuccessAndNotNull
+import com.fatkhun.core.utils.logError
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
@@ -364,7 +367,7 @@ class MainRepository(
 
         val data: HashMap<String, String> = hashMapOf()
         data["q"] = form.keyword
-        data["categoryId"] = form.category_id
+        data["category_id"] = form.category_id.toString()
         data["status"] = form.status
         data["type"] = form.type
         data["limit"] = form.limit.toString()
@@ -490,16 +493,16 @@ class MainRepository(
         emitSource(pagingLive)
     }
 
-    fun updatePostingItem(
+    fun updateStatusPostingItem(
         token: String,
         itemId: String,
-        form: PostingUpdateForm
+        form: PostingUpdateStatusForm
     ): MutableLiveData<Resource<BaseResponse>> {
         val dataResponse = MutableLiveData<Resource<BaseResponse>>()
         dataResponse.postValue(Resource.loading(null))
         if (networkHelper.isNetworkConnected()) {
             retrofitInstance.provideRetrofit(RetrofitInstance.DesClient.ETEMU)
-                .updatePostingItem("Bearer $token", itemId, form).enqueue(object : Callback<BaseResponse> {
+                .updateStatusPostingItem("Bearer $token", itemId, form).enqueue(object : Callback<BaseResponse> {
                     override fun onResponse(
                         call: Call<BaseResponse>,
                         response: Response<BaseResponse>
@@ -569,6 +572,119 @@ class MainRepository(
         return dataResponse
     }
 
+    fun updatePostingItem(
+        token: String,
+        itemId: String,
+        form: PostingUpdateForm
+    ): MutableLiveData<Resource<BaseResponse>> {
+        val dataResponse = MutableLiveData<Resource<BaseResponse>>()
+        try {
+
+            val parts = mutableMapOf<String, RequestBody>()
+
+            // Prepare the file part
+            val path = form.photo
+            val filePart: MultipartBody.Part = try {
+                val file = File(path)
+                if (path.isNotEmpty() && file.exists()) {
+                    val requestFile = file.asRequestBody("image/jpg".toMediaTypeOrNull())
+                    MultipartBody.Part.createFormData("photo", file.name, requestFile)
+                } else {
+                    throw IllegalArgumentException("File path is empty or file doesn't exist")
+                }
+            } catch (e: Exception) {
+                // Fallback ke empty part
+                val emptyRequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("photo", "", emptyRequestBody)
+            }
+
+            // Prepare other parts
+            if (form.name.isNotEmpty()) parts["name"] = form.name.toRequestBody("text/plain".toMediaTypeOrNull())
+            if (form.description.isNotEmpty()) parts["description"] = form.description.toRequestBody("text/plain".toMediaTypeOrNull())
+            if (form.category_id != 0) parts["category_id"] = form.category_id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+            if (form.contact_type.isNotEmpty()) parts["contact_type"] = form.contact_type.toRequestBody("text/plain".toMediaTypeOrNull())
+            if (form.contact_value.isNotEmpty()) parts["contact_value"] = form.contact_value.toRequestBody("text/plain".toMediaTypeOrNull())
+            if (form.status.isNotEmpty()) parts["status"] = form.status.toRequestBody()
+            if (form.type.isNotEmpty()) parts["type"] = form.type.toRequestBody()
+            if (form.owner_id != 0) parts["owner_id"] = form.owner_id.toString().toRequestBody()
+
+            dataResponse.postValue(Resource.loading(null))
+            if (networkHelper.isNetworkConnected()) {
+                retrofitInstance.provideRetrofit(RetrofitInstance.DesClient.ETEMU)
+                    .updatePostingItem("Bearer $token", itemId, parts,filePart).enqueue(object : Callback<BaseResponse> {
+                        override fun onResponse(
+                            call: Call<BaseResponse>,
+                            response: Response<BaseResponse>
+                        ) {
+                            if (response.isSuccessAndNotNull()) {
+                                response.body()?.let {
+                                    dataResponse.postValue(
+                                        Resource.success(
+                                            it,
+                                            response.code(),
+                                            (call.request() as Request)
+                                        )
+                                    )
+                                }
+                            } else {
+                                response.errorBody()?.let {
+                                    val raw = it.string()
+                                    if (raw.isNotNull()) {
+                                        try {
+                                            val gson = Gson().fromJson(raw, BaseResponse::class.java)
+                                            dataResponse.postValue(
+                                                Resource.error(
+                                                    response.message(),
+                                                    response.code(),
+                                                    gson,
+                                                    (call.request() as Request)
+                                                )
+                                            )
+                                        }catch (e: Exception) {
+                                            dataResponse.postValue(
+                                                Resource.error(
+                                                    response.message(),
+                                                    response.code(),
+                                                    null,
+                                                    (call.request() as Request)
+                                                )
+                                            )
+                                        }
+                                    } else {
+                                        dataResponse.postValue(
+                                            Resource.error(
+                                                response.message(),
+                                                response.code(),
+                                                null,
+                                                (call.request() as Request)
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                            dataResponse.postValue(
+                                Resource.error(
+                                    t.message.toString(),
+                                    0,
+                                    null,
+                                    (call.request() as Request)
+                                )
+                            )
+                        }
+                    })
+            } else {
+                dataResponse.postValue(Resource.error("No internet connection", 0, null, null))
+            }
+            return dataResponse
+        }catch (_: Exception){
+            return dataResponse
+        }
+        return dataResponse
+    }
+
     fun postingItem(
         token: String,
         form: PostingItemForm
@@ -576,33 +692,34 @@ class MainRepository(
         val dataResponse = MutableLiveData<Resource<BaseResponse>>()
         try {
             // Prepare the file part
-            val path = form.file_evidence_path
+            val path = form.photo_url
             val filePart: MultipartBody.Part = try {
                 val file = File(path)
                 if (path.isNotEmpty() && file.exists()) {
                     val requestFile = file.asRequestBody("image/jpg".toMediaTypeOrNull())
-                    MultipartBody.Part.createFormData("file_evidence", file.name, requestFile)
+                    MultipartBody.Part.createFormData("photo", file.name, requestFile)
                 } else {
                     throw IllegalArgumentException("File path is empty or file doesn't exist")
                 }
             } catch (e: Exception) {
                 // Fallback ke empty part
                 val emptyRequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull())
-                MultipartBody.Part.createFormData("file_evidence", "", emptyRequestBody)
+                MultipartBody.Part.createFormData("photo", "", emptyRequestBody)
             }
 
             // Prepare other parts
-            val categoryId = form.categoryId.toRequestBody("text/plain".toMediaTypeOrNull())
+            val ownerId = form.user_id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+            val categoryId = form.id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
             val type = form.type.toRequestBody("text/plain".toMediaTypeOrNull())
             val name = form.name.toRequestBody("text/plain".toMediaTypeOrNull())
             val description = form.description.toRequestBody("text/plain".toMediaTypeOrNull())
-            val contactType = form.contactType.toRequestBody("text/plain".toMediaTypeOrNull())
-            val contactValue = form.contactValue.toRequestBody("text/plain".toMediaTypeOrNull())
+            val contactType = form.contact_type.toRequestBody("text/plain".toMediaTypeOrNull())
+            val contactValue = form.contact_value.toRequestBody("text/plain".toMediaTypeOrNull())
 
             dataResponse.postValue(Resource.loading(null))
             if (networkHelper.isNetworkConnected()) {
                 retrofitInstance.provideRetrofit(RetrofitInstance.DesClient.ETEMU)
-                    .postingItem("Bearer $token", categoryId, type, name, description, contactType, contactValue, filePart).enqueue(object : Callback<BaseResponse> {
+                    .postingItem("Bearer $token", categoryId, type, name, description, contactType, contactValue, ownerId,filePart).enqueue(object : Callback<BaseResponse> {
                         override fun onResponse(
                             call: Call<BaseResponse>,
                             response: Response<BaseResponse>
@@ -671,6 +788,7 @@ class MainRepository(
             }
             return dataResponse
         }catch (e: Exception){
+            logError("err $e")
             return dataResponse
         }
     }

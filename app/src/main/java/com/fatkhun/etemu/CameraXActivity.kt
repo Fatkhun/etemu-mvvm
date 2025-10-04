@@ -149,9 +149,14 @@ class CameraXActivity : AppCompatActivity() {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(outputDirectory)
                     logError("Photo capture succeeded: $savedUri")
+                    val cleanPath = if (savedUri.toString().startsWith("file://")) {
+                        savedUri.toString().substring(7)
+                    } else {
+                        savedUri
+                    }
 
                     val resultIntent = Intent().apply {
-                        putExtra(KEY_RESULT_FILE, savedUri.toString())
+                        putExtra(KEY_RESULT_FILE, cleanPath.toString())
                     }
                     setResult(RESULT_OK, resultIntent)
                     finish()
@@ -221,14 +226,15 @@ class CameraXActivity : AppCompatActivity() {
     }
 
     private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
-        }
-        return if (mediaDir != null && mediaDir.exists()) {
-            mediaDir
-        } else {
-            filesDir
-        }
+        val privateTempDir = File(cacheDir, resources.getString(R.string.app_name))
+        if (!privateTempDir.exists()) privateTempDir.mkdirs()
+
+        return File.createTempFile(
+            "${resources.getString(R.string.app_name).lowercase()}_tmp_" +
+                    "${System.currentTimeMillis()}",
+            ".jpg",
+            privateTempDir
+        )
     }
 
     override fun onStart() {

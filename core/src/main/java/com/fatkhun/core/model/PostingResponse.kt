@@ -14,7 +14,7 @@ data class LostFoundItemList(
     val type: String = "",
     val name: String = "",
     val description: String = "",
-    val photoUrl: String = "",
+    val photo_url: String = "",
     val contact_type: String = "",
     val contact_value: String = "",
     val status: String = "",

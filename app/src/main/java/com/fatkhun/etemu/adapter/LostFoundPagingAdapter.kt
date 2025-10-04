@@ -22,7 +22,7 @@ class LostFoundPagingAdapter(
 
     class LostFoundDiffCallback : DiffUtil.ItemCallback<LostFoundItemList>() {
         override fun areItemsTheSame(oldItem: LostFoundItemList, newItem: LostFoundItemList): Boolean {
-            return oldItem._id == newItem._id
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(
@@ -48,7 +48,7 @@ class LostFoundPagingAdapter(
         ) {
             binding.itemImage.load(
                 context,
-                datas.photoUrl
+                datas.photo_url
             )
             if (datas.status.lowercase() == "open") {
                 if (datas.type.lowercase() == "lost") {
@@ -73,8 +73,8 @@ class LostFoundPagingAdapter(
             }
             binding.itemTitle.text = setCustomeTextHTML(datas.name)
             binding.itemLocation.text = setCustomeTextHTML(datas.description)
-            binding.itemDate.text = FormatDateTime.getInfoTimeUtc(FormatDateTime.FORMAT_DATE_TIME_YMDTHMSZ, datas.updatedAt)
-            binding.itemCategory.text = setCustomeTextHTML(datas.category.name)
+            binding.itemDate.text = FormatDateTime.getInfoTimeUtc(FormatDateTime.FORMAT_DATE_TIME_WITH_TIME_ZONE, datas.updated_at)
+            binding.itemCategory.text = setCustomeTextHTML(datas.category_id.name)
         }
     }
 

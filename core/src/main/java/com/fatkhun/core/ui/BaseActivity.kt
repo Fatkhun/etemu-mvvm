@@ -12,20 +12,20 @@ import com.fatkhun.core.utils.changeLocale
 import org.koin.android.ext.android.inject
 import kotlin.getValue
 
-open class BaseActivity : AppCompatActivity(), View.OnClickListener {
+abstract class BaseActivity : AppCompatActivity(), View.OnClickListener {
 
     val mainVM by inject<MainViewModel>()
     val preferenceVM by inject<DataStoreViewModel>()
     val firebaseVM by inject<FirebaseRemoteConfigViewModel>()
     val network by inject<NetworkHelper>()
     val storeDataHelper by inject<StoreDataHelper>()
-    var useTopEdge: Boolean = true
-    var useBottomEdge: Boolean = true
     private var loadingDialog: LoadingDialog? = null
 
+    abstract fun getLayoutId(): View
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        applyEdgeToEdgeInsets(useTopEdge, useBottomEdge)
         super.onCreate(savedInstanceState)
+        setContentView(getLayoutId())
         loadingDialog = LoadingDialog(this)
 
         network.observe(this) {

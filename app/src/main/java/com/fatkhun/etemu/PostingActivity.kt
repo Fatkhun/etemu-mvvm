@@ -25,7 +25,9 @@ import androidx.core.view.drawToBitmap
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doAfterTextChanged
 import com.fatkhun.core.helper.PermissionHelper
+import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.model.PostingItemForm
+import com.fatkhun.core.model.PostingUpdateForm
 import com.fatkhun.core.ui.BaseActivity
 import com.fatkhun.core.utils.AlertDialogInterface
 import com.fatkhun.core.utils.RC
@@ -41,6 +43,8 @@ import com.fatkhun.core.utils.getVisibleBitmapFromPhotoView
 import com.fatkhun.core.utils.gone
 import com.fatkhun.core.utils.handleApiCallback
 import com.fatkhun.core.utils.isNotNull
+import com.fatkhun.core.utils.length
+import com.fatkhun.core.utils.load
 import com.fatkhun.core.utils.logError
 import com.fatkhun.core.utils.resizeBitmapToFitFrame
 import com.fatkhun.core.utils.rotateBitmap
@@ -50,6 +54,7 @@ import com.fatkhun.core.utils.saveImageFromUriToGallery
 import com.fatkhun.core.utils.setCustomeTextHTML
 import com.fatkhun.core.utils.showCustomDialog
 import com.fatkhun.core.utils.showSnackBar
+import com.fatkhun.core.utils.toJson
 import com.fatkhun.core.utils.visible
 import com.fatkhun.etemu.databinding.ActivityPostingBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -57,6 +62,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.radiobutton.MaterialRadioButton
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -76,21 +82,34 @@ class PostingActivity : BaseActivity() {
     private lateinit var originalBitmap: Bitmap
     private lateinit var photoUri: Uri
     private lateinit var photoFile: File
-    private var idCategory: String = ""
+    private var isEdit: Boolean? = false
+    private var idCategory: Int = 0
     private var tipeBarang: String = ""
     private var tipeKontak: String = ""
+    private var dataItem: LostFoundItemList = LostFoundItemList()
+    override fun getLayoutId(): View {
+        binding = ActivityPostingBinding.inflate(layoutInflater)
+        return binding.root
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityPostingBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.tvTitleToolbar.text = "Buat Posting"
+        val intent = intent.extras
+        val detail = intent?.getString("detail", "")
+        isEdit = intent?.getBoolean("is_edit", false)
+        dataItem = try {
+            Gson().fromJson(detail.toString(), LostFoundItemList::class.java)
+        }catch (_: Exception){
+            LostFoundItemList()
+        }
+        binding.tvTitleToolbar.text = if (isEdit == true) "Update Posting" else "Buat Posting"
+        binding.mbNext.text = if (isEdit == true) "Update Sekarang" else "Posting Sekarang"
         binding.ivBack.setOnClickListener {
             onBackPressed()
         }
@@ -103,6 +122,70 @@ class PostingActivity : BaseActivity() {
                 }
             }
         }
+        binding.edtName.setText(dataItem.name)
+        binding.tieDeskripsi.setText(dataItem.description)
+        binding.pvImageView.load(this, dataItem.photo_url)
+        tipeBarang = dataItem.type.lowercase()
+        tipeKontak = dataItem.contact_type.lowercase()
+        idCategory = dataItem.category_id.id
+        logError("detail ${dataItem.photo_url}")
+        when(dataItem.type.lowercase()) {
+            "lost" -> {
+                binding.rbLost.isChecked = true
+                binding.rbFound.isChecked = false
+            }
+            "found" -> {
+                binding.rbLost.isChecked = false
+                binding.rbFound.isChecked = true
+            }
+            else -> {
+                binding.rbLost.isChecked = false
+                binding.rbFound.isChecked = false
+            }
+        }
+        when(dataItem.contact_type.lowercase()) {
+            "whatsapp" -> {
+                binding.rbWhatsapp.isChecked = true
+                binding.rbTelegram.isChecked = false
+                binding.tilKontak.visible()
+                binding.edtKontak.setText(dataItem.contact_value)
+
+            }
+            "telegram" -> {
+                binding.rbWhatsapp.isChecked = false
+                binding.rbTelegram.isChecked = true
+                binding.tilKontak.visible()
+                binding.edtKontak.setText(dataItem.contact_value)
+            }
+            else -> {
+                binding.rbWhatsapp.isChecked = false
+                binding.rbTelegram.isChecked = false
+                binding.tilKontak.gone()
+                binding.edtKontak.setText("")
+            }
+        }
+        if (dataItem.name.isNotEmpty()) {
+            val nama = binding.edtName.text.toString()
+            val kontak = binding.edtKontak.text.toString()
+            val deskripsi = binding.tieDeskripsi.text.toString()
+
+            if (nama.isNotEmpty() && kontak.isNotEmpty() && deskripsi.isNotEmpty() &&
+                idCategory > 0 && tipeBarang.isNotEmpty() && tipeKontak.isNotEmpty()) {
+                binding.mbNext.apply {
+                    enable()
+                    setOnClickListener {
+                        sendPosting()
+                    }
+                }
+            } else {
+                binding.mbNext.apply {
+                    disable()
+                    setOnClickListener(null)
+                }
+
+            }
+        }
+
         binding.tvLabelNamaBarang.text = setCustomeTextHTML(resources.getString(com.fatkhun.core.R.string.app_text_nama_barang))
         binding.tvLabelTipe.text = setCustomeTextHTML(resources.getString(com.fatkhun.core.R.string.app_text_tipe_barang))
         binding.tvLabelKontak.text = setCustomeTextHTML(resources.getString(com.fatkhun.core.R.string.app_text_kontak))
@@ -272,12 +355,16 @@ class PostingActivity : BaseActivity() {
                             binding.cgKategori.isSingleSelection = true
                             binding.cgKategori.children.forEachIndexed { index, view ->
                                 val chip = view as Chip
+                                if (it.data[index].id == dataItem.category_id.id) {
+                                    chip.isChecked = true
+                                    idCategory = it.data[index].id
+                                }
                                 chip.setOnCheckedChangeListener {  _, isChecked ->
                                     if (isChecked) {
-                                        idCategory = it.data[index]._id
+                                        idCategory = it.data[index].id
                                         logError("kategori $idCategory")
                                     } else {
-                                        idCategory = ""
+                                        idCategory = 0
                                     }
                                 }
                             }
@@ -288,74 +375,36 @@ class PostingActivity : BaseActivity() {
     }
 
     private fun sendPosting() {
-        val nama = binding.edtName.text.toString()
-        val kontak = binding.edtKontak.text.toString()
-        val deskripsi = binding.tieDeskripsi.text.toString()
+        callToShare {
+            it?.let {
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                val filenameExt = "${resources.getString(R.string.app_name)}${timeStamp}.jpg"
+                saveImageFromUriToGallery(this@PostingActivity, it, filenameExt, 50) { imgFileName ->
+                    getSavedImageUri(this@PostingActivity, imgFileName)?.let { imgUri ->
+                        if (imgUri.isNotNull()) {
+                            val nama = binding.edtName.text.toString()
+                            val kontak = binding.edtKontak.text.toString()
+                            val deskripsi = binding.tieDeskripsi.text.toString()
 
-        if (nama.isBlank() || kontak.isBlank() || deskripsi.isBlank() ||
-            idCategory.isBlank() || tipeBarang.isBlank() || tipeKontak.isBlank()) {
-            showSnackBar(this@PostingActivity, "Isi data dengan lengkap yaa")
-            return
-        }
-
-        val form = PostingItemForm(
-            categoryId = idCategory,
-            type = tipeBarang,
-            name = nama,
-            description = deskripsi,
-            contactType = tipeKontak,
-            contactValue = kontak,
-            file_evidence_path = ""
-        )
-        mainVM.postingItem(storeDataHelper.getAuthToken(), form).observe(this@PostingActivity) { responseBody ->
-            handleApiCallback(
-                this@PostingActivity,
-                responseBody,
-                true,
-                object : RemoteCallback<String> {
-                    override fun do_callback(id: Int, t: String) {}
-                    override fun failed_callback(id: Int, t: String) {}
-                }) { res, code ->
-                    if (code == RC().CREATED) {
-                        res?.let {
-                            showSnackBar(this@PostingActivity, "Berhasil upload")
-                            onBackPressed()
-                        }
-                    } else {
-                        res?.let {
-                            dialogAlertOneButton(
-                                this,
-                                com.fatkhun.core.R.drawable.ic_ilus_general_warning,
-                                it.message,
-                                "",
-                                "Mengerti"
-                            ) {
-                                it.dismiss()
+                            if (nama.isBlank() || kontak.isBlank() || deskripsi.isBlank() ||
+                                idCategory == 0 || tipeBarang.isBlank() || tipeKontak.isBlank()) {
+                                showSnackBar(this@PostingActivity, "Isi data dengan lengkap yaa")
+                                return@saveImageFromUriToGallery
                             }
-                        }
-                    }
-                }
-        }
-        /*callToShare(activity) {
-            CoroutineScope(Dispatchers.Main).launch {
-                it?.let {
-                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-                    val filenameExt = "${resources.getString(R.string.app_name)}${timeStamp}.jpg"
-                    saveImageFromUriToGallery(this@PostingActivity, it, filenameExt, 50) { imgFileName ->
-                        getSavedImageUri(this@PostingActivity, imgFileName)?.let { imgUri ->
-                            if (imgUri.isNotNull()) {
-                                // todo api item
-                                val nama = binding.edtName.text.toString()
-                                val form = PostingItemForm(
-                                    categoryId = "",
-                                    type = "",
-                                    name = "",
-                                    description = "",
-                                    contactType = "",
-                                    contactValue = "",
-                                    file_evidence_path = getFilePathFromUri(this@PostingActivity, imgUri)!!
+
+                            if (isEdit == true) {
+                                val form = PostingUpdateForm(
+                                    category_id = idCategory,
+                                    owner_id = storeDataHelper.getDataUser().id,
+                                    type = tipeBarang,
+                                    name = nama,
+                                    status = "open",
+                                    description = deskripsi,
+                                    contact_type = tipeKontak,
+                                    contact_value = kontak,
+                                    photo = getFilePathFromUri(this@PostingActivity, imgUri)!!
                                 )
-                                mainVM.postingItem(storeDataHelper.getAuthToken(), form).observe(this@PostingActivity) { responseBody ->
+                                mainVM.updatePostingItem(storeDataHelper.getAuthToken(), dataItem.id.toString(), form).observe(this@PostingActivity) { responseBody ->
                                     handleApiCallback(
                                         this@PostingActivity,
                                         responseBody,
@@ -364,27 +413,83 @@ class PostingActivity : BaseActivity() {
                                             override fun do_callback(id: Int, t: String) {}
                                             override fun failed_callback(id: Int, t: String) {}
                                         }) { res, code ->
-
+                                        if (code == RC().SUCCESS) {
+                                            res?.let {
+                                                showSnackBar(this@PostingActivity, "Berhasil update")
+                                                onBackPressed()
+                                            }
+                                        } else {
+                                            res?.let {
+                                                dialogAlertOneButton(
+                                                    this@PostingActivity,
+                                                    com.fatkhun.core.R.drawable.ic_ilus_general_warning,
+                                                    it.message,
+                                                    "",
+                                                    "Mengerti"
+                                                ) {
+                                                    it.dismiss()
+                                                }
+                                            }
+                                        }
                                     }
                                 }
-                            } else {
-                                showSnackBar(this@PostingActivity, "Gambar tidak ditemukan")
+                                return@saveImageFromUriToGallery
                             }
+
+                            val form = PostingItemForm(
+                                id = idCategory,
+                                user_id = storeDataHelper.getDataUser().id,
+                                type = tipeBarang,
+                                name = nama,
+                                description = deskripsi,
+                                contact_type = tipeKontak,
+                                contact_value = kontak,
+                                photo_url = getFilePathFromUri(this@PostingActivity, imgUri)!!
+                            )
+                            mainVM.postingItem(storeDataHelper.getAuthToken(), form).observe(this@PostingActivity) { responseBody ->
+                                handleApiCallback(
+                                    this@PostingActivity,
+                                    responseBody,
+                                    true,
+                                    object : RemoteCallback<String> {
+                                        override fun do_callback(id: Int, t: String) {}
+                                        override fun failed_callback(id: Int, t: String) {}
+                                    }) { res, code ->
+                                    if (code == RC().CREATED) {
+                                        res?.let {
+                                            showSnackBar(this@PostingActivity, "Berhasil upload")
+                                            onBackPressed()
+                                        }
+                                    } else {
+                                        res?.let {
+                                            dialogAlertOneButton(
+                                                this@PostingActivity,
+                                                com.fatkhun.core.R.drawable.ic_ilus_general_warning,
+                                                it.message,
+                                                "",
+                                                "Mengerti"
+                                            ) {
+                                                it.dismiss()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            showSnackBar(this@PostingActivity, "Gambar tidak ditemukan")
                         }
                     }
                 }
             }
-        }*/
+        }
     }
 
-    private fun callToShare(activity: Activity, callback: (Uri?) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val visibleBitmap = getVisibleBitmapFromPhotoView(binding.pvImageView)
-            val finalBitmap = createImage(visibleBitmap, binding.pvImageView.drawToBitmap())
-            val uri = saveBitmapToCache(activity, finalBitmap, resources.getString(R.string.app_name))
-            //logError("result uri $uri")
-            callback.invoke(uri)
-        }
+    private fun callToShare(callback: (Uri?) -> Unit) {
+        val visibleBitmap = getVisibleBitmapFromPhotoView(binding.pvImageView)
+        val finalBitmap = createImage(visibleBitmap, binding.pvImageView.drawToBitmap())
+        val uri = saveBitmapToCache(this@PostingActivity, finalBitmap, resources.getString(R.string.app_name))
+        //logError("result uri $uri")
+        callback.invoke(uri)
     }
 
     fun createImage(photoBitmap: Bitmap, frameBitmap: Bitmap): Bitmap {

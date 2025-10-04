@@ -17,17 +17,32 @@ import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.model.LostFoundResponse
 import com.fatkhun.core.model.PostingItemForm
 import com.fatkhun.core.model.PostingUpdateForm
+import com.fatkhun.core.model.PostingUpdateStatusForm
 import com.fatkhun.core.model.RegisterForm
 import com.fatkhun.core.model.RegisterResponse
 import com.fatkhun.core.repository.DataStoreRepository
 import com.fatkhun.core.repository.MainRepository
+import com.fatkhun.core.utils.PrefKey
 import com.fatkhun.core.utils.Resource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 
 class MainViewModel(
     private val mainRepository: MainRepository,
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
+
+    fun getViewDataUser(): MutableLiveData<String> {
+        val liveDataLocation: MutableLiveData<String> = MutableLiveData()
+        viewModelScope.launch {
+            delay(300)
+            dataStoreRepository.getSecureValueData(PrefKey.DATA_USER, "") {
+                liveDataLocation.postValue(it)
+            }
+        }
+        return liveDataLocation
+    }
 
     fun registerUser(
         form: RegisterForm
@@ -98,6 +113,12 @@ class MainViewModel(
         token: String, itemId: String, form: PostingUpdateForm
     ): MutableLiveData<Resource<BaseResponse>> {
         return mainRepository.updatePostingItem(token, itemId, form)
+    }
+
+    fun updateStatusPostingItem(
+        token: String, itemId: String, form: PostingUpdateStatusForm
+    ): MutableLiveData<Resource<BaseResponse>> {
+        return mainRepository.updateStatusPostingItem(token, itemId, form)
     }
 
 }

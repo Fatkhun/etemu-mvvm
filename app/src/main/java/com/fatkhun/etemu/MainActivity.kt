@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -15,25 +16,35 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.fatkhun.core.helper.PermissionHelper
+import com.fatkhun.core.model.CategoriesItem
 import com.fatkhun.core.model.LostFoundForm
 import com.fatkhun.core.model.LostFoundItemList
 import com.fatkhun.core.ui.BaseActivity
 import com.fatkhun.core.ui.PagingLoadStateAdapter
+import com.fatkhun.core.utils.AlertDialogInterface
 import com.fatkhun.core.utils.Constant
+import com.fatkhun.core.utils.PrefKey
+import com.fatkhun.core.utils.RC
+import com.fatkhun.core.utils.RemoteCallback
 import com.fatkhun.core.utils.afterTextChangedDebounce
 import com.fatkhun.core.utils.gone
+import com.fatkhun.core.utils.handleApiCallback
 import com.fatkhun.core.utils.hideSoftKeyboard
 import com.fatkhun.core.utils.logError
+import com.fatkhun.core.utils.showCustomDialog
 import com.fatkhun.core.utils.showing
 import com.fatkhun.core.utils.stoped
 import com.fatkhun.core.utils.toJson
 import com.fatkhun.etemu.adapter.LostFoundPagingAdapter
 import com.fatkhun.etemu.databinding.ActivityMainBinding
+import com.fatkhun.etemu.databinding.DialogSortFilterBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
@@ -48,9 +59,10 @@ class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
     private var isNewCreated = true
     private var searchTextInput = ""
-    private var searchCategory = ""
+    private var searchCategory = 0
     private var searchStatus = ""
     private var searchType = ""
+    private var listCategory: MutableList<CategoriesItem> = mutableListOf()
 
     private val lostFoundPagingAdapter: LostFoundPagingAdapter by lazy {
         LostFoundPagingAdapter(this@MainActivity, object : LostFoundPagingAdapter.Callback{
@@ -66,11 +78,15 @@ class MainActivity : BaseActivity() {
 
         })
     }
+
+    override fun getLayoutId(): View {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -92,7 +108,7 @@ class MainActivity : BaseActivity() {
             if (refresher is LoadState.NotLoading) binding.lytShimmer.stoped()
             if (refresher is LoadState.Error) binding.lytShimmer.stoped()
 
-            logError("Empty View $displayEmpty")
+            logError("$refresher Empty View $displayEmpty")
             if (binding.edtSearch.text!!.isEmpty()) {
                 binding.emptyView.isVisible = displayEmpty && !isFiltered()
                 binding.emptyViewFilter.isVisible = displayEmpty && isFiltered()
@@ -113,13 +129,61 @@ class MainActivity : BaseActivity() {
         binding.swipeLayout.setOnRefreshListener {
             onRefresh()
         }
+        binding.ivLogout.setOnClickListener {
+            showCustomDialog(this,
+                "Apakah ingin keluar aplikasi?", "",
+                "Iya, Lanjutkan",
+                "Batal",
+                false,
+                object : AlertDialogInterface {
+                    override fun onPositiveButtonClicked() {
+                        lifecycleScope.launch {
+                            preferenceVM.clearDataValue(PrefKey.DATA_USER)
+                            preferenceVM.clearDataValue(PrefKey.IS_LOGIN)
+                            delay(200)
+                            startActivity(Intent(this@MainActivity, AuthActivity::class.java))
+                            finish()
+                        }
+                    }
+
+                    override fun onNegativeButtonClicked() {}
+                })
+        }
         binding.fabAddItem.setOnClickListener {
             startActivity(Intent(this, PostingActivity::class.java))
         }
         binding.fbRiwayat.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
+        binding.fbFilter.setOnClickListener {
+            dialogFilter()
+        }
+        binding.btnFilter.setOnClickListener {
+            dialogFilter()
+        }
         setupSearch()
+    }
+
+    private fun dialogFilter() {
+        openFilterDialog(this, true, object: ListFilterListener{
+            override fun onOrderByStatus(status: String) {
+                searchStatus = status
+            }
+
+            override fun onOrderByType(tipe: String) {
+                searchType = tipe
+            }
+
+            override fun onOrderByCategory(idKategori: Int) {
+                searchCategory = idKategori
+            }
+
+            override fun onPostAction() {
+                onRefresh()
+            }
+
+
+        })
     }
 
     private fun onRefresh() {
@@ -152,6 +216,7 @@ class MainActivity : BaseActivity() {
         network.observe(this) {
             when (it?.isConnected) {
                 true -> {
+                    getCategory()
                     setupObserve(searchTextInput, searchCategory, searchStatus, searchType)
                 }
 
@@ -173,16 +238,17 @@ class MainActivity : BaseActivity() {
     }
 
     private fun isFiltered(): Boolean {
-        return searchCategory.isNotEmpty() || searchStatus.isNotEmpty() || searchType.isNotEmpty()
+        return searchCategory > 0 || searchStatus.isNotEmpty() || searchType.isNotEmpty()
     }
 
-    private fun setupObserve(searchText: String, categoryId: String, status: String, type: String) {
+    private fun setupObserve(searchText: String, categoryId: Int, status: String, type: String) {
         if (isNewCreated) getItemList(searchText, categoryId, status, type)
     }
 
-    private fun getItemList(search: String, categoryId: String, status: String, type: String) {
+    private fun getItemList(search: String, categoryId: Int, status: String, type: String) {
         val form = LostFoundForm(
             keyword = search,
+            user_id = storeDataHelper.getDataUser().id,
             category_id = categoryId,
             status = status,
             type = type,
@@ -197,15 +263,34 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun getCategory() {
+        mainVM.getCategoryList().observe(this) { response ->
+            handleApiCallback(
+                this,
+                response,
+                false,
+                object : RemoteCallback<String> {
+                    override fun do_callback(id: Int, t: String) {}
+                    override fun failed_callback(id: Int, t: String) {}
+                }) { res, code ->
+                if (code == RC().SUCCESS) {
+                    res?.let {
+                        listCategory = it.data
+                    }
+                }
+            }
+        }
+    }
+
     fun openFilterDialog(
         context: Context,
-        lifecycleScope: CoroutineScope,
         expandDialog: Boolean,
         listener: ListFilterListener
     ) {
         BottomSheetDialog(context, com.fatkhun.core.R.style.BottomSheetDialog)
             .apply {
-                setContentView(layoutInflater.inflate(R.layout.dialog_sort_filter, null))
+                val binding: DialogSortFilterBinding = DialogSortFilterBinding.inflate(layoutInflater)
+                setContentView(binding.root)
 
                 val displayMetrics = context.resources.displayMetrics
                 val nestedFilter = findViewById<NestedScrollView>(R.id.nested_filter)
@@ -220,15 +305,19 @@ class MainActivity : BaseActivity() {
                     nestedFilter?.requestLayout()
                 }
 
+                resetFilter(binding, this, listener)
 
+                binding.tvReset.setOnClickListener {
+                    listener.onOrderByStatus(searchStatus)
+                    listener.onOrderByType(searchType)
+                    listener.onOrderByCategory(searchCategory)
+                    resetFilter(binding,this,listener)
+                }
 
-                findViewById<Button>(R.id.btn_request)?.setOnClickListener { thisView ->
-                    lifecycleScope.launch {
-                        //listener.onFirstPostActions(filter)
-                        delay(300)
-                        //listener.onSecondPostActions(filter)
-                        dismiss()
-                    }
+                setOnCancelListener {
+                    listener.onOrderByStatus(searchStatus)
+                    listener.onOrderByType(searchType)
+                    listener.onOrderByCategory(searchCategory)
                 }
 
                 if (expandDialog) behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -238,10 +327,86 @@ class MainActivity : BaseActivity() {
             }
     }
 
+    private fun resetFilter(binding: DialogSortFilterBinding, bottomSheetDialog: BottomSheetDialog, listener: ListFilterListener) {
+        var selectedType = searchType
+        var selectedStatus = searchStatus
+        var selectedCategory = searchCategory
+
+        when(searchType.lowercase()) {
+            "lost" -> binding.rbLost.isChecked = true
+            "found" -> binding.rbFound.isChecked = true
+            else -> {
+                // Tidak perlu set apa-apa
+            }
+        }
+        when(searchStatus.lowercase()) {
+            "open" -> binding.rbStatusOpen.isChecked = true
+            "claimed" -> binding.rbStatusComplete.isChecked = true
+            else -> {
+                // Tidak perlu set apa-apa
+            }
+        }
+
+        // SET LISTENER SETELAH SET NILAI AWAL
+        binding.rgTipeBarang.setOnCheckedChangeListener { group, checkedId  ->
+            selectedType = when (checkedId) {
+                R.id.rbLost -> "lost"
+                R.id.rbFound -> "found"
+                else -> ""
+            }
+        }
+
+        binding.rgStatusBarang.setOnCheckedChangeListener { group, checkedId  ->
+            selectedStatus = when (checkedId) {
+                R.id.rbStatusOpen -> "open"
+                R.id.rbStatusComplete -> "claimed"
+                else -> ""
+            }
+        }
+        binding.chipGroup.removeAllViews()
+        listCategory.forEachIndexed { index, item ->
+            val chip = layoutInflater.inflate(
+                R.layout.component_chip_category,
+                binding.chipGroup,
+                false
+            ) as Chip
+            chip.text = item.name
+            chip.isCheckable = true
+            chip.id = index + 1
+            binding.chipGroup.addView(chip)
+        }
+        binding.chipGroup.isSingleSelection = true
+        binding.chipGroup.children.forEachIndexed { index, view ->
+            val chip = view as Chip
+            if (listCategory[index].id == searchCategory) {
+                chip.isChecked = true
+                selectedCategory = listCategory[index].id
+            }
+            chip.setOnCheckedChangeListener {  _, isChecked ->
+                if (isChecked) {
+                    selectedCategory = listCategory[index].id
+                } else {
+                    selectedCategory = 0
+                }
+            }
+        }
+
+        binding.btnRequest.setOnClickListener { thisView ->
+            lifecycleScope.launch {
+                listener.onOrderByStatus(selectedStatus)
+                listener.onOrderByType(selectedType)
+                listener.onOrderByCategory(selectedCategory)
+                delay(200)
+                listener.onPostAction()
+                bottomSheetDialog.dismiss()
+            }
+        }
+    }
+
     interface ListFilterListener {
-        fun onOrderByChanged(orderBy: String)
-        fun onDistanceFilterChanged(distance: Int)
-        fun onFirstPostActions(filter: MutableList<String>)
-        fun onSecondPostActions(filter: MutableList<String>)
+        fun onOrderByStatus(status: String)
+        fun onOrderByType(tipe: String)
+        fun onOrderByCategory(idKategori: Int)
+        fun onPostAction()
     }
 }

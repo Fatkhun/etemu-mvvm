@@ -2,6 +2,7 @@ package com.fatkhun.etemu
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -30,11 +31,15 @@ import com.google.android.material.textfield.TextInputLayout
 class AuthActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAuthBinding
+
+    override fun getLayoutId(): View {
+        binding = ActivityAuthBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityAuthBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)

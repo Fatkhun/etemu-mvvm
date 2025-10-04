@@ -25,7 +25,7 @@ class LostFoundPagingSource(
 
         val datas: HashMap<String, String> = hashMapOf()
         datas["q"] = req.keyword
-        datas["categoryId"] = req.category_id
+        datas["category_id"] = req.category_id.toString()
         datas["status"] = req.status
         datas["type"] = req.type
         datas["limit"] = req.limit.toString()

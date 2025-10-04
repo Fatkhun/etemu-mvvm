@@ -18,13 +18,28 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_12sdp"
         android:layout_marginTop="@dimen/_22sdp"
         android:text="Filter Barang"
         android:textAppearance="@style/title_large"
         android:textColor="@color/b_100"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_span" />
+
+    <TextView
+        android:id="@+id/tvReset"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:text="Reset"
+        android:gravity="end"
+        android:textAppearance="@style/title_large"
+        android:textColor="@color/s_75"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@id/v_span" />
 
     <androidx.core.widget.NestedScrollView
@@ -159,7 +174,6 @@
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_9sdp"
                 app:chipSpacingHorizontal="@dimen/_6sdp"
-                app:chipSpacingVertical="@dimen/_10sdp"
                 app:layout_constraintTop_toBottomOf="@+id/info2"
                 app:singleSelection="true"/>
 
